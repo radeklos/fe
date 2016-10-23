@@ -1,21 +1,20 @@
 import React from 'react';
 import {Link} from 'react-router'
 
-import NavLink from './modules/NavLink'
 import {Navbar, NavItem, MenuItem, Nav, NavDropdown} from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
+
 
 const navbarInstance = (
     <Navbar>
         <Navbar.Header>
             <Navbar.Brand>
-                <a className="navbar-brand" href="index.html">HLD.</a>
+                <a className="navbar-brand" href="index.html">hld.</a>
             </Navbar.Brand>
             <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
             <Nav pullRight>
-                <LinkContainer to="/repos"><NavItem>Repos</NavItem></LinkContainer>
                 <LinkContainer to="/about"><NavItem>About</NavItem></LinkContainer>
                 <LinkContainer to="/join"><NavItem>Join</NavItem></LinkContainer>
             </Nav>
