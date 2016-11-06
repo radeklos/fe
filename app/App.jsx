@@ -1,12 +1,22 @@
 import React from 'react';
-import {Link} from 'react-router'
+import {
+  Link
+} from 'react-router'
 
-import {Navbar, NavItem, MenuItem, Nav, NavDropdown} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
+import {
+  Navbar,
+  NavItem,
+  MenuItem,
+  Nav,
+  NavDropdown
+} from 'react-bootstrap';
+import {
+  LinkContainer
+} from 'react-router-bootstrap';
 
 
 const navbarInstance = (
-    <Navbar>
+  <Navbar>
         <Navbar.Header>
             <Navbar.Brand>
                 <a className="navbar-brand" href="index.html">hld.</a>
@@ -23,17 +33,16 @@ const navbarInstance = (
 );
 
 class App extends React.Component {
-    render() {
-        return (
-            <div>
-                {navbarInstance}
-
-                <div className="container">
-                    {this.props.children}
-                </div>
-            </div>
-      );
-    }
+  render() {
+    return (
+      <div>
+        {navbarInstance}
+          <div className="container">
+              {this.props.children}
+          </div>
+      </div>
+    );
+  }
 }
 
 export default App;
