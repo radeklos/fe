@@ -17,19 +17,19 @@ import {
 
 const navbarInstance = (
   <Navbar>
-        <Navbar.Header>
-            <Navbar.Brand>
-                <a className="navbar-brand" href="index.html">hld.</a>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-        </Navbar.Header>
-        <Navbar.Collapse>
-            <Nav pullRight>
-                <LinkContainer to="/about"><NavItem>About</NavItem></LinkContainer>
-                <LinkContainer to="/join"><NavItem>Join</NavItem></LinkContainer>
-            </Nav>
-        </Navbar.Collapse>
-    </Navbar>
+    <Navbar.Header>
+      <Navbar.Brand>
+        <a className="navbar-brand" href="index.html">hld.</a>
+      </Navbar.Brand>
+      <Navbar.Toggle />
+    </Navbar.Header>
+    <Navbar.Collapse>
+      <Nav pullRight>
+        <LinkContainer to="/about"><NavItem>About</NavItem></LinkContainer>
+        <LinkContainer to="/join"><NavItem>Join</NavItem></LinkContainer>
+      </Nav>
+    </Navbar.Collapse>
+  </Navbar>
 );
 
 class App extends React.Component {
@@ -38,7 +38,7 @@ class App extends React.Component {
       <div>
         {navbarInstance}
           <div className="container">
-              {this.props.children}
+            {this.props.children}
           </div>
       </div>
     );
