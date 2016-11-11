@@ -12,7 +12,10 @@ export default class FormButton extends React.Component {
     return (
       <FormGroup>
         <Col smOffset={2} sm={8}>
-          <Button type="submit">{ this.props.children }</Button>
+          <Button
+            bsStyle="primary"
+            type="submit"
+            disabled={ this.props.isLoading }>{ this.props.children }</Button>
         </Col>
       </FormGroup>
     )

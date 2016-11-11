@@ -10,36 +10,44 @@ export default React.createClass({
   getInitialState: function() {
     return {
       data: {},
-      errors: {}
+      errors: {},
+      isLoading: false
     };
   },
 
   onSubmit: function(e) {
-    var that = this
-    fetch('http://localhost:5000/v1/users', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        firstName: this.state.data.firstName,
-        lastName: this.state.data.lastName,
-        email: this.state.data.email,
-        password: this.state.data.password
-      })
-    }).then(function(responseText) {
-      // todo handle 40X and 20X
-      return responseText.json()
-    }).then(function(json) {
-      var errors = {};
-      for (var key in json.errors) {
-        errors[key] = json.errors[key].defaultMessage
-      }
+    this.verifyPassword()
+    console.log(this.state.errors)
+    if (Object.keys(this.state.errors).length == 0) {
       this.setState({
-        errors: errors
+        isLoading: true
       })
-    }.bind(this))
+      fetch('http://localhost:5000/v1/users', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          firstName: this.state.data.firstName,
+          lastName: this.state.data.lastName,
+          email: this.state.data.email,
+          password: this.state.data.password
+        })
+      }).then(function(responseText) {
+        // todo handle 40X and 20X
+        return responseText.json()
+      }).then(function(json) {
+        var errors = {};
+        for (var key in json.errors) {
+          errors[key] = json.errors[key].defaultMessage
+        }
+        this.setState({
+          errors: errors,
+          isLoading: false
+        })
+      }.bind(this))
+    }
     e.preventDefault();
   },
 
@@ -47,21 +55,25 @@ export default React.createClass({
     var data = this.state.data
     var errors = this.state.errors
     data[e.target.name] = e.target.value
-    errors[e.target.name] = ''
+    delete errors[e.target.name]
     this.setState({
       data: data,
       errors: errors
     })
   },
 
-  verifyPassword: function(e) {
+  verifyPassword: function() {
+    var passwordVerified = this.state.data.hasOwnProperty('verifyPassword') ? this.state.data.verifyPassword : ""
+    var errors = this.state.errors
+    delete errors["verifyPassword"]
     if (this.state.data.hasOwnProperty('password') && this.state.data['password'].length > 0) {
-      var errors = this.state.errors
-      errors['verifyPassword'] = this.state.data['password'] === e.target.value ? '' : 'not same'
-      this.setState({
-        errors: errors
-      })
+      if (this.state.data['password'] !== passwordVerified) {
+        errors['verifyPassword'] = 'not same'
+      }
     }
+    this.setState({
+      errors: errors
+    })
   },
 
   render() {
@@ -92,13 +104,15 @@ export default React.createClass({
           placeholder=""
           name="password"
           error={ this.state.errors.password }
-          onChange={ this.onChange }>Password</FormField>
+          onChange={ this.onChange } >Password</FormField>
         <FormField
           type="password"
           placeholder="Verify password"
           name="verifyPassword"
-          error={ this.state.errors.verifyPassword } />
-        <FormButton>Sign in</FormButton>
+          error={ this.state.errors.verifyPassword }
+          onChange={ this.onChange }
+          onBlur={ this.verifyPassword } />
+        <FormButton isLoading={ this.state.isLoading }>Sign in</FormButton>
       </form>
     </div>)
   }
