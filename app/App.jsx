@@ -19,7 +19,7 @@ const navbarInstance = (
   <Navbar>
     <Navbar.Header>
       <Navbar.Brand>
-        <a className="navbar-brand" href="index.html">hld.</a>
+        <Link to="/" className="navbar-brand">hld.</Link>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>

@@ -28,10 +28,10 @@ export default function PerformRegistration(actionObject) {
       }
     }.bind(this))
     .catch(function(error) {
-      return error.response.json()
-    }).then(function(json) {
-      if (actionObject.hasOwnProperty('onError')) {
-        actionObject.onError(json)
-      }
+      return error.response.json().then(function(json) {
+        if (actionObject.hasOwnProperty('onError')) {
+          actionObject.onError(json)
+        }
+      })
     })
 }

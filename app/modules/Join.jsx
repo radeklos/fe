@@ -5,8 +5,11 @@ import FormField from '../forms/FormField.jsx'
 import FormButton from '../forms/FormButton.jsx'
 import PerformRegistration from '../api/Users.jsx'
 
+import {
+  browserHistory
+} from 'react-router'
 
-export default React.createClass({
+export const Join = React.createClass({
 
   getInitialState: function() {
     return {
@@ -16,12 +19,9 @@ export default React.createClass({
     };
   },
 
-  onSuccess: function() {
-    console.log('ok')
-  },
-
   onSubmit: function(e) {
     this.verifyPassword()
+
     if (Object.keys(this.state.errors).length == 0) {
       this.setState({
         isLoading: true
@@ -34,7 +34,9 @@ export default React.createClass({
           email: this.state.data.email,
           password: this.state.data.password
         },
-        onSucess: function() {},
+        onSuccess: function() {
+          browserHistory.push('/join/finished')
+        },
         onError: function(json) {
           var errors = {};
           for (var key in json.errors) {
@@ -44,7 +46,6 @@ export default React.createClass({
             errors: errors,
             isLoading: false
           })
-          Router.transitionTo("RegistrationFinished")
         }.bind(this)
       })
     }
@@ -68,7 +69,7 @@ export default React.createClass({
     delete errors["verifyPassword"]
     if (this.state.data.hasOwnProperty('password') && this.state.data['password'].length > 0) {
       if (this.state.data['password'] !== passwordVerified) {
-        errors['verifyPassword'] = 'not same'
+        errors['verifyPassword'] = 'Passwords are not same'
       }
     }
     this.setState({
@@ -79,7 +80,7 @@ export default React.createClass({
   render() {
     return (<div>
     <h1>Join</h1>
-      <form onSubmit={this.onSubmit} className="form-horizontal" autoComplete="off">
+      <form onSubmit={this.onSubmit} className="form-horizontal" method='post' autoComplete="off">
         <FormField
           type="text"
           name="firstName"
@@ -114,6 +115,20 @@ export default React.createClass({
           onBlur={ this.verifyPassword } />
         <FormButton isLoading={ this.state.isLoading }>Sign in</FormButton>
       </form>
+    </div>)
+  }
+})
+
+export const Finished = React.createClass({
+
+  getInitialState: function() {
+    return {};
+  },
+
+  render() {
+    return (<div>
+    <h1>Check your email</h1>
+    <p>We've send a message to your email. Open it up and click Active Account. We'll take if from there</p>
     </div>)
   }
 })
