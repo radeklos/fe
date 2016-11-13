@@ -3,6 +3,7 @@ import 'whatwg-fetch';
 
 import FormField from '../forms/FormField.jsx'
 import FormButton from '../forms/FormButton.jsx'
+import PerformRegistration from '../api/Users.jsx'
 
 
 export default React.createClass({
@@ -15,38 +16,37 @@ export default React.createClass({
     };
   },
 
+  onSuccess: function() {
+    console.log('ok')
+  },
+
   onSubmit: function(e) {
     this.verifyPassword()
-    console.log(this.state.errors)
     if (Object.keys(this.state.errors).length == 0) {
       this.setState({
         isLoading: true
       })
-      fetch('http://localhost:5000/v1/users', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+
+      PerformRegistration({
+        body: {
           firstName: this.state.data.firstName,
           lastName: this.state.data.lastName,
           email: this.state.data.email,
           password: this.state.data.password
-        })
-      }).then(function(responseText) {
-        // todo handle 40X and 20X
-        return responseText.json()
-      }).then(function(json) {
-        var errors = {};
-        for (var key in json.errors) {
-          errors[key] = json.errors[key].defaultMessage
-        }
-        this.setState({
-          errors: errors,
-          isLoading: false
-        })
-      }.bind(this))
+        },
+        onSucess: function() {},
+        onError: function(json) {
+          var errors = {};
+          for (var key in json.errors) {
+            errors[key] = json.errors[key].defaultMessage
+          }
+          this.setState({
+            errors: errors,
+            isLoading: false
+          })
+          Router.transitionTo("RegistrationFinished")
+        }.bind(this)
+      })
     }
     e.preventDefault();
   },
