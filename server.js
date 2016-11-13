@@ -16,11 +16,11 @@ server.connection({
 
 // Add the React-rendering view engine
 server.views({
-    engines: {
-        jsx: require('hapi-react-views')
-    },
-    relativeTo: __dirname,
-    path: 'views'
+  engines: {
+    jsx: require('hapi-react-views')
+  },
+  relativeTo: __dirname,
+  path: 'views'
 });
 
 // Add a route to serve static assets (CSS, JS, IMG)

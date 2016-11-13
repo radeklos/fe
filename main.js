@@ -2,17 +2,29 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './app/App.jsx';
 
-import { Router, Route, hashHistory } from 'react-router'
+import {
+    Router,
+    Route,
+    IndexRoute,
+    browserHistory,
+    ReactRouter
+} from 'react-router'
 
-import About from './app/modules/About'
-import Repos from './app/modules/Repos'
+import About from './app/modules/About.jsx'
+import {
+    Join,
+    Finished
+} from './app/modules/Join.jsx'
 
 
 ReactDOM.render((
-    <Router history={hashHistory}>
+        <Router history={browserHistory}>
         <Route path="/" component={App}>
-        <Route path="/repos" component={Repos}/>
-        <Route path="/about" component={About}/>
+            <Route path="/about" component={About}/>
+            <Route path="/join">
+                <IndexRoute component={Join} />
+                <Route path="finished" component={Finished}/>
+            </Route>
         </Route>
     </Router>),
     document.getElementById('app')
