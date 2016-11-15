@@ -12,6 +12,7 @@
 @import url(http://fonts.googleapis.com/css?family=Lato:400,900);
 @import url(https://fonts.googleapis.com/css?family=Dancing+Script);
 
+
 /*	################################################################
 	1. GENERAL STRUCTURES
 ################################################################# */
@@ -85,6 +86,11 @@ a:focus {
 /*	################################################################
 	BOOTSTRAP MODIFICATIONS & TWEAKS
 ################################################################# */
+
+body {
+	background-color: #f7f7f7
+}
+
 .navbar {
 	padding-top: 0;
 	margin-bottom: 0;
@@ -93,15 +99,20 @@ a:focus {
 
 .navbar-brand {
 	font-family: 'Dancing Script', cursive;
-	font-weight: 900;
-	font-size: 35px;
+	font-size: 40px;
+	height: 66px;
 }
 
 .navbar-header .navbar-brand {
 	color: #777;
 }
 
+.navbar-brand {
+	padding-top: 23px;
+}
+
 .navbar-default {
+	background-color: #fff;
 	border-width: 0 0 1px 0;
 }
 
@@ -109,18 +120,23 @@ a:focus {
 	color: black;
 }
 
+.navbar-default .navbar-nav {
+	margin-top: 10px;
+}
+
 .navbar-default .navbar-nav > li > a {
 	color: #777;
 	font-size: 13px;
-	font-weight: bold;
+	font-weight: 400;
+	font-family: Roboto, sans-serif;
 }
 
 .navbar-default .navbar-nav > li > a:hover {
-	color: rgb(252, 85, 85);
+	color: #ff005f;
 }
 
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-	color: rgb(252, 85, 85);
+	color: #ff005f;
 	background-color: transparent;
 }
 
