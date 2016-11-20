@@ -94,7 +94,7 @@ export const Join = React.createClass({
           error={ this.state.errors.lastName }
           onChange={ this.onChange }>Last name</FormField>
         <FormField
-          type="text"
+          type="email"
           placeholder="Email"
           name="email"
           error="email"
