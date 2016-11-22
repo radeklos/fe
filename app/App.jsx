@@ -16,6 +16,7 @@ import {
 import LogInForm from './forms/LogInForm.jsx'
 
 import Join from './modules/Join.jsx'
+import SessionManager from './services/Session.jsx'
 
 
 export default React.createClass({
@@ -39,22 +40,23 @@ export default React.createClass({
   },
 
   render() {
-    const navbarInstance = (
-      <Navbar>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <Link to="/" className="navbar-brand">hld.</Link>
-          </Navbar.Brand>
-          <Navbar.Toggle />
-        </Navbar.Header>
-        <Navbar.Collapse>
-          <Nav pullRight>
-            <LinkContainer to="/about"><NavItem>About</NavItem></LinkContainer>
-            <LinkContainer to="/join"><NavItem>Join</NavItem></LinkContainer>
-            <NavItem onClick={this.showModal}>Log in</NavItem>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
+    const guestMenu = (
+      <Nav pullRight>
+        <LinkContainer to="/about"><NavItem>About</NavItem></LinkContainer>
+        <LinkContainer to="/join"><NavItem>Join</NavItem></LinkContainer>
+        <NavItem onClick={this.showModal}>Log in</NavItem>
+      </Nav>
+    );
+
+    const userMenu = (
+      <Nav pullRight>
+        <NavDropdown noCaret className="user-menu" title="" id="basic-nav-dropdown">
+          <MenuItem>Settings</MenuItem>
+          <MenuItem>Help</MenuItem>
+          <MenuItem divider />
+          <MenuItem>Log out</MenuItem>
+        </NavDropdown>
+      </Nav>
     );
 
     const login = (
@@ -70,7 +72,18 @@ export default React.createClass({
 
     return (
       <div>
-        {navbarInstance}
+      <Navbar>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <a href="#">hld.</a>
+          </Navbar.Brand>
+          { SessionManager.isLogIn() ? "" : <Navbar.Toggle /> }
+        </Navbar.Header>
+          <Navbar.Collapse>
+            { SessionManager.isLogIn() ?  userMenu : guestMenu }
+          </Navbar.Collapse>
+        </Navbar>
+
         {login}
         <div className="container">
           {this.props.children}
