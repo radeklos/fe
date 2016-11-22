@@ -23,7 +23,8 @@ export default React.createClass({
 
   getInitialState() {
     return {
-      show: false
+      show: false,
+      isLogIn: SessionManager.isLogIn()
     };
   },
 
@@ -39,11 +40,16 @@ export default React.createClass({
     });
   },
 
+  onSuccessLogin() {
+    this.setState({
+      isLogIn: SessionManager.isLogIn()
+    }, this.hideModal());
+  },
+
   render() {
     const guestMenu = (
       <Nav pullRight>
-        <LinkContainer to="/about"><NavItem>About</NavItem></LinkContainer>
-        <LinkContainer to="/join"><NavItem>Join</NavItem></LinkContainer>
+        <LinkContainer to="/join"><NavItem>Sign up</NavItem></LinkContainer>
         <NavItem onClick={this.showModal}>Log in</NavItem>
       </Nav>
     );
@@ -52,7 +58,6 @@ export default React.createClass({
       <Nav pullRight>
         <NavDropdown noCaret className="user-menu" title="" id="basic-nav-dropdown">
           <MenuItem>Settings</MenuItem>
-          <MenuItem>Help</MenuItem>
           <MenuItem divider />
           <MenuItem>Log out</MenuItem>
         </NavDropdown>
@@ -62,7 +67,7 @@ export default React.createClass({
     const login = (
       <Modal show={this.state.show} onHide={this.hideModal}>
         <Modal.Body>
-          <LogInForm />
+          <LogInForm onSuccessLogin={this.onSuccessLogin} />
         </Modal.Body>
         <Modal.Footer>
           Don't have an account?
@@ -77,10 +82,10 @@ export default React.createClass({
           <Navbar.Brand>
             <a href="#">hld.</a>
           </Navbar.Brand>
-          { SessionManager.isLogIn() ? "" : <Navbar.Toggle /> }
+          { this.state.isLogIn ? "" : <Navbar.Toggle /> }
         </Navbar.Header>
           <Navbar.Collapse>
-            { SessionManager.isLogIn() ?  userMenu : guestMenu }
+            { this.state.isLogIn ?  userMenu : guestMenu }
           </Navbar.Collapse>
         </Navbar>
 
