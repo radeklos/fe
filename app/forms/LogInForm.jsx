@@ -80,7 +80,7 @@ export default React.createClass({
             Email
           </Col>
           <Col sm={10}>
-            <FormControl type="email" name="login" placeholder="Email" onChange={ this.onChange } />
+            <FormControl type="email" name="login" placeholder="Email" requirede onChange={ this.onChange } />
           </Col>
         </FormGroup>
 
@@ -89,7 +89,7 @@ export default React.createClass({
             Password
           </Col>
           <Col sm={10}>
-            <FormControl type="password" name="password" placeholder="Password" onChange={ this.onChange } />
+            <FormControl type="password" name="password" placeholder="Password" required onChange={ this.onChange } />
           </Col>
         </FormGroup>
 

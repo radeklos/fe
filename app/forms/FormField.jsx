@@ -29,6 +29,7 @@ export default class FormField extends React.Component {
         <Col componentClass={ControlLabel} sm={2}>{ this.props.children }</Col>
         <Col sm={8}>
           <FormControl
+            required={this.props.required}
             type={ this.props.type }
             id={ this.props.name }
             name={ this.props.name }

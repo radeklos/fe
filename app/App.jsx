@@ -14,6 +14,7 @@ import {
   LinkContainer
 } from 'react-router-bootstrap';
 import LogInForm from './forms/LogInForm.jsx'
+import {browserHistory} from 'react-router'
 
 import Join from './modules/Join.jsx'
 import SessionManager from './services/Session.jsx'
@@ -44,6 +45,7 @@ export default React.createClass({
     this.setState({
       isLogIn: SessionManager.isLogIn()
     }, this.hideModal());
+    browserHistory.push('/')
   },
 
   render() {

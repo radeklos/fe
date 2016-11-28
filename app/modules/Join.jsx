@@ -5,9 +5,7 @@ import FormField from '../forms/FormField.jsx'
 import FormButton from '../forms/FormButton.jsx'
 import PerformRegistration from '../api/Users.jsx'
 
-import {
-  browserHistory
-} from 'react-router'
+import {browserHistory} from 'react-router'
 
 export const Join = React.createClass({
 
@@ -21,7 +19,6 @@ export const Join = React.createClass({
 
   onSubmit: function(e) {
     this.verifyPassword()
-
     if (Object.keys(this.state.errors).length == 0) {
       this.setState({
         isLoading: true
@@ -85,25 +82,28 @@ export const Join = React.createClass({
           type="text"
           name="firstName"
           placeholder="First name"
+          required={true}
           error={ this.state.errors.firstName }
           onChange={ this.onChange }>First name</FormField>
         <FormField
           type="text"
           placeholder="Last name"
           name="lastName"
+          required={true}
           error={ this.state.errors.lastName }
           onChange={ this.onChange }>Last name</FormField>
         <FormField
           type="email"
           placeholder="Email"
           name="email"
-          error="email"
+          required={true}
           error={ this.state.errors.email }
           onChange={ this.onChange }>Email</FormField>
         <FormField
           type="password"
           placeholder=""
           name="password"
+          required={true}
           error={ this.state.errors.password }
           onChange={ this.onChange } >Password</FormField>
         <FormField
