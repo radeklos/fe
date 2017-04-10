@@ -1,0 +1,157 @@
+/*  ################################################################
+
+    Author: Carlos Alvarez
+    URL: http://alvarez.is
+
+    Project Name: SOLID - Bootstrap 3 Theme
+    Version: 1.0
+    URL: http://alvarez.is
+
+################################################################# */
+@import url(http://fonts.googleapis.com/css?family=Raleway:400,700,900);
+@import url(http://fonts.googleapis.com/css?family=Lato:400,900);
+@import url(https://fonts.googleapis.com/css?family=Dancing+Script);
+
+/*  ################################################################
+    1. GENERAL STRUCTURES
+################################################################# */
+
+p {
+    padding: 0;
+    margin-bottom: 12px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24px;
+    color: #384452;
+    margin-top: 10px;
+}
+
+a {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    -webkit-transition: background-color .4s linear, color .4s linear;
+    -moz-transition: background-color .4s linear, color .4s linear;
+    -o-transition: background-color .4s linear, color .4s linear;
+    -ms-transition: background-color .4s linear, color .4s linear;
+    transition: background-color .4s linear, color .4s linear;
+}
+
+a:hover,
+a:focus {
+    text-decoration: none;
+    color: #01b2fe;
+}
+
+::-moz-selection {
+    color: #fff;
+    text-shadow: none;
+    background: #2B2E31;
+}
+
+::selection {
+    color: #fff;
+    text-shadow: none;
+    background: #2B2E31;
+}
+
+.centered {
+    text-align: center
+}
+
+/*  ################################################################
+    BOOTSTRAP MODIFICATIONS & TWEAKS
+################################################################# */
+
+.navbar .app-logo {
+    height: 50px;
+    display: inline-block;
+    margin-top: -12px;
+}
+
+.navbar {
+    padding-top: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.navbar-brand {
+    font-family: 'Dancing Script', cursive;
+    font-size: 40px;
+    height: 66px;
+}
+
+.navbar-header .navbar-brand {
+    color: #777;
+}
+
+.navbar-brand {
+    padding-top: 23px;
+}
+
+.navbar-default {
+    background-color: #fff;
+    border-width: 0 0 1px 0;
+}
+
+.navbar-default .navbar-brand:hover {
+    color: black;
+}
+
+.navbar-default .navbar-nav {
+    margin-top: 10px;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #777;
+    font-size: 13px;
+    font-weight: 400;
+    font-family: Roboto, sans-serif;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: #ff005f;
+}
+
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+    color: #ff005f;
+    background-color: transparent;
+}
+
+.navbar-default .navbar-nav > .active > a {
+    color: #777;
+    background-color: transparent;
+}
+
+.help-block {
+    margin-bottom: 0;
+}
+
+.navbar-default .navbar-nav > li.user-menu > a {
+    border-radius: 50%;
+    border: 2px solid #777;
+    height: 35px;
+    width: 35px;
+    margin-top: 6px;
+    padding: 6px 8px;
+    font-size: 15px;
+    color: #777;
+}
+
+.navbar-toggle {
+    margin-top: 16px;
+}
+
+.navbar-default .navbar-nav > li.user-menu > a:after {
+    content: "\e008";
+    font-family: "Glyphicons Halflings", serif;
+}
+
+.dropdown-menu .sub-menu {
+    visibility: hidden;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
