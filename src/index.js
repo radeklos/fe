@@ -8,6 +8,7 @@ import App from "./App";
 import About from "./modules/About";
 import {Finished, Join} from "./modules/Join.jsx";
 import {U} from "./modules/U.jsx";
+import {ImportEmployees} from "./modules/ImportEmployees";
 
 import "./index.css";
 
@@ -21,6 +22,7 @@ ReactDOM.render((
                     <IndexRoute component={Join}/>
                     <Route path="finished" component={Finished}/>
                 </Route>
+                <Route path="/employees/import" component={ImportEmployees}/>
             </Route>
         </Router>),
     document.getElementById('root')

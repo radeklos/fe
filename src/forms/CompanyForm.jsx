@@ -6,17 +6,29 @@ import SimpleFormField from "../forms/SimpleFormField.jsx";
 import {CreateCompany} from "../api/Companies.jsx";
 
 
-export default React.createClass({
+class CompanyForm extends React.Component {
 
-    getInitialState: function () {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             data: {},
             errors: {},
             isLoading: false
         };
-    },
+    }
 
-    onSubmit: function (e) {
+    onFormError(json) {
+        let errors = {};
+        for (let key in json.errors) {
+            errors[key] = json.errors[key].defaultMessage;
+        }
+        this.setState({
+            errors: errors,
+            isLoading: false
+        })
+    }
+
+    onSubmit(e) {
         this.setState({
             isLoading: true
         });
@@ -33,42 +45,26 @@ export default React.createClass({
                 postcode: this.state.data.postcode,
                 defaultDaysOff: this.state.data.defaultDaysOff,
             },
-            onSuccess: function () {
-                console.log('on success')
-            },
-            onError: function (json) {
-                let errors = {};
-                for (let key in json.errors) {
-                    errors[key] = json.errors[key].defaultMessage;
-                }
-                this.setState({
-                    errors: errors,
-                    isLoading: false
-                })
-            }.bind(this)
+            onSuccess: this.props.onFormSuccess.bind(this),
+            onError: this.onFormError.bind(this)
         });
         e.preventDefault();
-    },
+    }
 
-    onChange: function (e) {
+    onChange(e) {
         let data = this.state.data;
+        let errors = this.state.errors;
         data[e.target.name] = e.target.value;
+        delete errors[e.target.name];
         this.setState({
             data: data,
+            errors: errors
         })
-    },
-
-    onChangeCheckbox: function (e) {
-        let data = this.state.data;
-        data[e.target.name] = e.target.checked;
-        this.setState({
-            data: data,
-        })
-    },
+    }
 
     render() {
         return (
-            <Form horizontal onSubmit={this.onSubmit} method="post" autoComplete="off">
+            <Form horizontal onSubmit={this.onSubmit.bind(this)} method="post" autoComplete="off">
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-5">
@@ -76,19 +72,19 @@ export default React.createClass({
                                 type="text"
                                 name="name"
                                 placeholder="Google, Amazon, Facebook"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.name }>Name</SimpleFormField>
 
                             <SimpleFormField
                                 type="text"
                                 name="regNo"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.regNo }>Reg. No</SimpleFormField>
 
                             <SimpleFormField
                                 type="text"
                                 name="vatId"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.vatId }>Vat ID
                             </SimpleFormField>
 
@@ -103,25 +99,25 @@ export default React.createClass({
                             <SimpleFormField
                                 type="text"
                                 name="address1"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.address1 }>Address</SimpleFormField>
 
                             <SimpleFormField
                                 type="text"
                                 name="address2"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.address2 }>Address 2</SimpleFormField>
 
                             <SimpleFormField
                                 type="text"
                                 name="city"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.city }>City</SimpleFormField>
 
                             <SimpleFormField
                                 type="text"
                                 name="postcode"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.postcode }>Postcode</SimpleFormField>
                         </div>
                     </div>
@@ -133,7 +129,7 @@ export default React.createClass({
                                 type="number"
                                 min="0"
                                 name="defaultDaysOff"
-                                onChange={ this.onChange }
+                                onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.defaultDaysOff }>The holiday entitlement for the full
                                 year</SimpleFormField>
                         </div>
@@ -149,4 +145,6 @@ export default React.createClass({
             </Form>
         );
     }
-})
+}
+
+export default CompanyForm;
