@@ -3,6 +3,7 @@ import React from "react";
 import {Button, Jumbotron} from "react-bootstrap";
 
 import CompanyForm from "../forms/CompanyForm.jsx";
+import {ImportEmployeesModal} from "./ImportEmployees";
 
 
 export class U extends React.Component {
@@ -29,12 +30,17 @@ export class CreateCompany extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            createCompany: false
+            createCompany: false,
+            showImportEmployeesModel: false
         }
     }
 
     onFormSuccess(_json) {
         this.setState({createCompany: true})
+    }
+
+    showModal() {
+        this.setState({showImportEmployeesModel: true});
     }
 
     render() {
@@ -51,7 +57,8 @@ export class CreateCompany extends React.Component {
             <Jumbotron>
                 <h1>Almost there!</h1>
                 <p>Well done you successfully created your company. The last step is to import your employees.</p>
-                <p><Button href="/employees/import" bsStyle="primary">Import employees</Button></p>
+                <p><Button onClick={this.showModal.bind(this)} bsStyle="primary">Import employees</Button></p>
+                <ImportEmployeesModal open={this.state.showImportEmployeesModel}/>
             </Jumbotron>
         );
         return this.state.createCompany ? form : importEmployees;

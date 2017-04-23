@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, ButtonToolbar, Col, Form, FormControl, FormGroup, Modal, Table} from "react-bootstrap";
 import PropTypes from "prop-types";
+import {config} from "../config";
 
 
 export class ImportEmployees extends React.Component {
@@ -32,18 +33,45 @@ class ImportControllers extends React.Component {
         }
     }
 
-    close() {
-        this.setState({showModal: false});
-    }
-
     open() {
         this.setState({showModal: true});
     }
 
     render() {
-        const downloadExample = (<Button bsStyle="link">Download example</Button>);
+        return (
+            <div className="pull-right">
+                <ImportEmployeesModal />
+                <ButtonToolbar>
+                    <Button bsStyle="primary" onClick={ this.open.bind(this) }>Import employees</Button>
+                </ButtonToolbar>
+            </div>
+        )
+    }
+}
 
-        const modal = (
+export class ImportEmployeesModal extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            showModal: this.props.open
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({showModal: nextProps.open});
+    }
+
+    close() {
+        this.setState({showModal: false});
+    }
+
+    downloadExample() {
+        window.location = config.SERVER_URL + '/v1/companies/examples/employees';
+    }
+
+    render() {
+        return (
             <Modal show={this.state.showModal} onHide={this.close.bind(this)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Import employees</Modal.Title>
@@ -61,28 +89,18 @@ class ImportControllers extends React.Component {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    { downloadExample }
-                    <Button onClick={this.close}>Close</Button>
+                    <Button bsStyle="link" onClick={this.downloadExample.bind(this)}>Download example</Button>
+                    <Button onClick={this.close.bind(this)}>Close</Button>
                     <Button bsStyle="success">Import</Button>
                 </Modal.Footer>
             </Modal>
-        );
-
-        return (
-            <div className="pull-right">
-                { modal }
-                <ButtonToolbar>
-                    { downloadExample }
-                    <Button bsStyle="primary" onClick={ this.open.bind(this) }>Import employees</Button>
-                </ButtonToolbar>
-            </div>
         )
     }
 }
 
 class EmployeeTable extends React.Component {
 
-    renderEmployeeRow(row) {
+    static renderEmployeeRow(row) {
         return (
             <tr key={ row.id }>
                 <td>{ row.firstName }</td>
@@ -103,7 +121,7 @@ class EmployeeTable extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                { this.props.employees.map(this.renderEmployeeRow.bind(this)) }
+                { this.props.employees.map(EmployeeTable.renderEmployeeRow.bind(this)) }
                 </tbody>
             </Table>
         )
