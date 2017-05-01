@@ -114,10 +114,11 @@ export const Join = React.createClass({
 
                 <FormGroup>
                     <Col sm={8} smOffset={2}>
-                        <FormButton isLoading={ this.state.isLoading }>Sign in</FormButton>
+                        <FormButton
+                            isLoading={ this.state.isLoading }
+                            bsStyle="success">Sign in</FormButton>
                     </Col>
                 </FormGroup>
-
             </Form>
         </div>)
     }

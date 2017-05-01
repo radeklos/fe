@@ -2,9 +2,11 @@ import React from "react";
 import {Button, ButtonToolbar, Col, Form, FormControl, FormGroup, Modal, Table} from "react-bootstrap";
 import PropTypes from "prop-types";
 import {config} from "../config";
+import {ImportEmployees} from "../api/Employees"
+import SessionManager from "../services/Session.jsx";
 
 
-export class ImportEmployees extends React.Component {
+export class EditEmployees extends React.Component {
 
     render() {
 
@@ -14,10 +16,8 @@ export class ImportEmployees extends React.Component {
 
         return (
             <div>
-                <h1>Import employees</h1>
-
+                <h1>Employees</h1>
                 <EmployeeTable employees={employees}/>
-
                 <ImportControllers />
             </div>
         )
@@ -40,7 +40,6 @@ class ImportControllers extends React.Component {
     render() {
         return (
             <div className="pull-right">
-                <ImportEmployeesModal />
                 <ButtonToolbar>
                     <Button bsStyle="primary" onClick={ this.open.bind(this) }>Import employees</Button>
                 </ButtonToolbar>
@@ -62,8 +61,17 @@ export class ImportEmployeesModal extends React.Component {
         this.setState({showModal: nextProps.open});
     }
 
-    close() {
+    closeModal() {
         this.setState({showModal: false});
+    }
+
+    performImportEmployees(e) {
+        ImportEmployees({file: this.state.file});
+        e.preventDefault();
+    }
+
+    fileHandleChange(e) {
+        this.setState({file: e.target.files[0]});
     }
 
     downloadExample() {
@@ -71,28 +79,33 @@ export class ImportEmployeesModal extends React.Component {
     }
 
     render() {
+        console.log(SessionManager.get());
         return (
-            <Modal show={this.state.showModal} onHide={this.close.bind(this)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Import employees</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>Upload a CSV file to import a new employees directory.</p>
+            <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
+                <Form horizontal onSubmit={this.performImportEmployees.bind(this)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Import employees</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Upload a CSV file to import a new employees directory.</p>
 
-                    <Form horizontal>
                         <FormGroup controlId="formHorizontalFile">
                             <Col sm={12}>
-                                <FormControl type="file" placeholder="file" accept=".csv"/>
+                                <FormControl
+                                    type="file"
+                                    placeholder="file"
+                                    accept=".csv"
+                                    onChange={this.fileHandleChange.bind(this)}/>
                             </Col>
                         </FormGroup>
-                    </Form>
 
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button bsStyle="link" onClick={this.downloadExample.bind(this)}>Download example</Button>
-                    <Button onClick={this.close.bind(this)}>Close</Button>
-                    <Button bsStyle="success">Import</Button>
-                </Modal.Footer>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button bsStyle="link" onClick={this.downloadExample.bind(this)}>Download example</Button>
+                        <Button onClick={this.closeModal.bind(this)}>Close</Button>
+                        <Button bsStyle="success" type="submit">Import</Button>
+                    </Modal.Footer>
+                </Form>
             </Modal>
         )
     }

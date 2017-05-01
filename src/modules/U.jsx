@@ -4,39 +4,37 @@ import {Button, Jumbotron} from "react-bootstrap";
 
 import CompanyForm from "../forms/CompanyForm.jsx";
 import {ImportEmployeesModal} from "./ImportEmployees";
+import SessionManager from "./../services/Session.jsx";
 
 
 export class U extends React.Component {
 
     render() {
-        if (this.props.user === undefined) {
+        SessionManager.refreshUserDetails()
+        let user = SessionManager.get();
+        if (!user.isInCompany()) {
             return (
                 <div>
                     <h1>Join us</h1>
                 </div>
             )
         } else {
-            return (
-                <div>
-                    { this.props.user.isInCompany() ? <EmployeeList /> : <CreateCompany /> }
-                </div>
-            )
+            return (<FirstLogInComponent />)
         }
     }
 }
 
-export class CreateCompany extends React.Component {
+export class FirstLogInComponent extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            createCompany: false,
-            showImportEmployeesModel: false
+            companyCreated: false,
         }
     }
 
-    onFormSuccess(_json) {
-        this.setState({createCompany: true})
+    onFormSuccess(data) {
+        this.setState({companyCreated: true})
     }
 
     showModal() {
@@ -44,34 +42,27 @@ export class CreateCompany extends React.Component {
     }
 
     render() {
-        const form = (
-            <div>
-                <h1>Hello stranger</h1>
-                <p className="lead">
-                    It seems that you just created your account. Please set up your company before you
-                    invite your employees.</p>
-                <CompanyForm onFormSuccess={this.onFormSuccess.bind(this)}/>
-            </div>
-        );
-        const importEmployees = (
-            <Jumbotron>
-                <h1>Almost there!</h1>
-                <p>Well done you successfully created your company. The last step is to import your employees.</p>
-                <p><Button onClick={this.showModal.bind(this)} bsStyle="primary">Import employees</Button></p>
-                <ImportEmployeesModal open={this.state.showImportEmployeesModel}/>
-            </Jumbotron>
-        );
-        return this.state.createCompany ? form : importEmployees;
-    }
-
-}
-
-export class EmployeeList extends React.Component {
-
-    render() {
-        return (<div>
-            <h1>{"Look who's working here"}</h1>
-        </div>)
+        if (this.state.companyCreated) {
+            return (
+                <Jumbotron>
+                    <h1>Almost there!</h1>
+                    <p>Well done you successfully created your company. The last step is to import your employees.</p>
+                    <p><Button onClick={this.showModal.bind(this)} bsStyle="primary">Import employees</Button></p>
+                    <ImportEmployeesModal open={this.state.showImportEmployeesModel} />
+                </Jumbotron>
+            );
+        } else {
+            return (
+                <div>
+                    <h1>Hello stranger</h1>
+                    <p className="lead">
+                        It seems that you just created your account. Please set up your company before you
+                        invite your employees.
+                    </p>
+                    <CompanyForm onFormSuccess={this.onFormSuccess.bind(this)} />
+                </div>
+            );
+        }
     }
 
 }

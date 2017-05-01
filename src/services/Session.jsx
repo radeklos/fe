@@ -1,5 +1,7 @@
 import cookie from "react-cookie";
 
+import {GetDetails} from "./../api/Users.jsx";
+
 class User {
 
     constructor(token) {
@@ -7,15 +9,15 @@ class User {
     }
 
     setDetails(details) {
-        this.details = details
+        cookie.save('user', {details: details});
     }
 
     isInCompany() {
-        return '_links' in this.details && this.details._links
+        return !!('company' in this.getDetails() && this.getDetails().company);
     }
 
     getDetails() {
-        return this.details
+        return cookie.load('user').details;
     }
 
     static getTokenData() {
@@ -50,6 +52,19 @@ export default class SessionManager {
 
     static isLogIn() {
         return SessionManager.exists()
+    }
+
+    static refreshUserDetails() {
+        GetDetails({
+            onSuccess: function (json) {
+                console.log('refresh', json);
+                let user = SessionManager.get();
+                user.setDetails(json);
+            },
+            onError: function (json) {
+                // this.logout()
+            }
+        })
     }
 
 }

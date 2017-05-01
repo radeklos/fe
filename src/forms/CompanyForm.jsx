@@ -28,6 +28,12 @@ class CompanyForm extends React.Component {
         })
     }
 
+    onFormSuccess() {
+        if (this.props.onFormSuccess) {
+            this.props.onFormSuccess();
+        }
+    }
+
     onSubmit(e) {
         this.setState({
             isLoading: true
@@ -45,7 +51,7 @@ class CompanyForm extends React.Component {
                 postcode: this.state.data.postcode,
                 defaultDaysOff: this.state.data.defaultDaysOff,
             },
-            onSuccess: this.props.onFormSuccess.bind(this),
+            onSuccess: this.onFormSuccess.bind(this),
             onError: this.onFormError.bind(this)
         });
         e.preventDefault();
@@ -130,13 +136,12 @@ class CompanyForm extends React.Component {
                                 min="0"
                                 name="defaultDaysOff"
                                 onChange={ this.onChange.bind(this) }
-                                error={ this.state.errors.defaultDaysOff }>The holiday entitlement for the full
-                                year</SimpleFormField>
+                                error={ this.state.errors.defaultDaysOff }>The holiday entitlement for the full year</SimpleFormField>
                         </div>
 
                         <div className="row">
                             <div className="col-md-12">
-                                <FormButton isLoading={ this.state.isLoading }>Create</FormButton>
+                                <FormButton isLoading={ this.state.isLoading } bsStyle="success">Create</FormButton>
                             </div>
                         </div>
 
