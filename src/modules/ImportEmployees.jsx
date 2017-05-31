@@ -66,12 +66,16 @@ export class ImportEmployeesModal extends React.Component {
     }
 
     performImportEmployees(e) {
-        ImportEmployees({file: this.state.file});
+        ImportEmployees(
+            SessionManager.get().getCompanyId(),
+            this.state.files[0],
+            {file: this.state.file}
+        );
         e.preventDefault();
     }
 
     fileHandleChange(e) {
-        this.setState({file: e.target.files[0]});
+        this.setState({file: e.target.files[0].result});
     }
 
     downloadExample() {
@@ -79,7 +83,6 @@ export class ImportEmployeesModal extends React.Component {
     }
 
     render() {
-        console.log(SessionManager.get());
         return (
             <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
                 <Form horizontal onSubmit={this.performImportEmployees.bind(this)}>

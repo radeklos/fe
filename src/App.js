@@ -89,7 +89,7 @@ class App extends React.Component {
             <Nav pullRight>
                 <NavDropdown noCaret className="user-menu" title="" id="basic-nav-dropdown">
                     <MenuItem>Settings</MenuItem>
-                    <MenuItem divider/>
+                    <MenuItem divider />
                     <MenuItem onClick={this.logout.bind(this)}>Log out</MenuItem>
                 </NavDropdown>
             </Nav>

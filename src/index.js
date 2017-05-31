@@ -7,8 +7,7 @@ import App from "./App";
 
 import About from "./modules/About";
 import {Finished, Join} from "./modules/Join.jsx";
-import {U} from "./modules/U.jsx";
-import {ImportEmployees} from "./modules/ImportEmployees";
+import {U, CreateCompany, ImportEmployees} from "./modules/U.jsx";
 
 import "./index.css";
 
@@ -22,7 +21,10 @@ ReactDOM.render((
                     <IndexRoute component={Join}/>
                     <Route path="finished" component={Finished}/>
                 </Route>
-                <Route path="/employees/import" component={ImportEmployees}/>
+                <Route path="/newcomers">
+                    <IndexRoute component={CreateCompany}/>
+                    <Route path="import-employees" component={ImportEmployees}/>
+                </Route>
             </Route>
         </Router>),
     document.getElementById('root')

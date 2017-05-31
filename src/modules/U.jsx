@@ -4,27 +4,38 @@ import {Button, Jumbotron} from "react-bootstrap";
 
 import CompanyForm from "../forms/CompanyForm.jsx";
 import {ImportEmployeesModal} from "./ImportEmployees";
+import {Employees} from "./Employees"
 import SessionManager from "./../services/Session.jsx";
+import {browserHistory} from "react-router";
 
 
 export class U extends React.Component {
 
-    render() {
-        SessionManager.refreshUserDetails()
+    componentWillMount() {
         let user = SessionManager.get();
         if (!user.isInCompany()) {
+            browserHistory.push('/newcomers')
+        }
+    }
+
+    render() {
+        if(this.props.user) {
+            return (
+                <div>
+                    <Employees />
+                </div>
+            );
+        } else {
             return (
                 <div>
                     <h1>Join us</h1>
                 </div>
             )
-        } else {
-            return (<FirstLogInComponent />)
         }
     }
 }
 
-export class FirstLogInComponent extends React.Component {
+export class CreateCompany extends React.Component {
 
     constructor(props) {
         super(props);
@@ -34,7 +45,30 @@ export class FirstLogInComponent extends React.Component {
     }
 
     onFormSuccess(data) {
-        this.setState({companyCreated: true})
+        browserHistory.push('/newcomers/import-employees')
+    }
+
+    render() {
+        return (
+            <div>
+                <h1>Hello stranger</h1>
+                <p className="lead">
+                    It seems that you just created your account. Please set up your company before you
+                    invite your employees.
+                </p>
+                <CompanyForm onFormSuccess={this.onFormSuccess.bind(this)} />
+            </div>
+        );
+    }
+}
+
+export class ImportEmployees extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            showImportEmployeesModel: false,
+        }
     }
 
     showModal() {
@@ -42,27 +76,13 @@ export class FirstLogInComponent extends React.Component {
     }
 
     render() {
-        if (this.state.companyCreated) {
-            return (
-                <Jumbotron>
-                    <h1>Almost there!</h1>
-                    <p>Well done you successfully created your company. The last step is to import your employees.</p>
-                    <p><Button onClick={this.showModal.bind(this)} bsStyle="primary">Import employees</Button></p>
-                    <ImportEmployeesModal open={this.state.showImportEmployeesModel} />
-                </Jumbotron>
-            );
-        } else {
-            return (
-                <div>
-                    <h1>Hello stranger</h1>
-                    <p className="lead">
-                        It seems that you just created your account. Please set up your company before you
-                        invite your employees.
-                    </p>
-                    <CompanyForm onFormSuccess={this.onFormSuccess.bind(this)} />
-                </div>
-            );
-        }
+        return (
+            <Jumbotron>
+                <h1>Almost there!</h1>
+                <p>Well done you successfully created your company. The last step is to import your employees.</p>
+                <p><Button onClick={this.showModal.bind(this)} bsStyle="primary">Import employees</Button></p>
+                <ImportEmployeesModal open={this.state.showImportEmployeesModel} />
+            </Jumbotron>
+        );
     }
-
 }

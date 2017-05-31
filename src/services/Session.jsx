@@ -20,6 +20,10 @@ class User {
         return cookie.load('user').details;
     }
 
+    getCompanyId() {
+        return this.getDetails().company.uid;
+    }
+
     static getTokenData() {
         return atob(self.token.split('.')[1])
     }
