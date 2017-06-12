@@ -1,9 +1,10 @@
 import React from "react";
 
-import {MenuItem, SplitButton, Table, Media, Badge, Pager} from "react-bootstrap";
+import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button} from "react-bootstrap";
 
 import SessionManager from "./../services/Session.jsx";
 import {GetDepartment} from '../api/Companies'
+import {GetDepartmentEmployees} from '../api/Employees'
 import {Gravatar} from '../components/Gravatar'
 
 
@@ -12,28 +13,26 @@ export class Employees extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedDepartment: 0,
-            departments: [{uid: 1, name: 'HR'}],
-            employees: [
-                {firstName: 'Radek', lastName: 'Los', department: 'HR', email: 'radek.los@gmail.com'},
-                {firstName: 'Lucie', lastName: 'Svobodova', department: 'HR', email: 'lucie.svobodova@gmail.com'},
-                {firstName: 'Radek', lastName: 'Los', department: 'HR', email: 'radek.los@gmail.com'},
-                {firstName: 'Radek', lastName: 'Los', department: 'HR', email: 'radek.los@gmail.com'},
-                {firstName: 'Radek', lastName: 'Los', department: 'HR', email: 'radek.los@gmail.com'}
-            ]
+            selectedDepartment: null,
+            departments: [],
+            employees: []
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let user = SessionManager.get();
-        GetDepartment(user.getCompanyId(), {onSuccess: this.pupulateListOfDepartments})
+        GetDepartment(user.getCompanyId(), {onSuccess: this.pupulateListOfDepartments.bind(this)})
     }
 
     pupulateListOfDepartments(response) {
         let departments = response.map(d => {
             return {name: d.name, uid: d.uid}
         });
-        this.setState({departments: departments});
+        this.setState({departments: departments}, this.departmentChange(departments[0]));
+    }
+
+    pupulateListOfEmployees(response) {
+        this.setState({employees: response});
     }
 
     localizeMonth(date) {
@@ -44,9 +43,17 @@ export class Employees extends React.Component {
         return date.toLocaleString("en-us", {weekday: "short"})[0];
     }
 
-    render() {
-        let selected = this.state.departments[this.state.selectedDepartment];
+    loadEmployees(departmentId) {
+        let user = SessionManager.get();
+        GetDepartmentEmployees(user.getCompanyId(), departmentId, {onSuccess: this.pupulateListOfEmployees.bind(this)});
+    }
 
+    departmentChange(d) {
+        this.setState({selectedDepartment: d});
+        this.loadEmployees(d.uid);
+    }
+
+    render() {
         let firstDate = new Date();
         let lastDay = new Date();
         lastDay.setDate(lastDay.getDate() + 30)
@@ -63,15 +70,24 @@ export class Employees extends React.Component {
 
         return (
             <div>
-                <Table responsive style={{marginTop: "1em"}} className="employees">
+                <Button bsStyle="primary" className="pull-right">Book time off</Button>
+                <h1>Your company</h1>
+                <Table responsive className="employees">
                 <thead>
                     <tr>
                         <td>
-                            <SplitButton title={selected.name}>
-                               { this.state.departments.map(d => {
-                                    return (<MenuItem key={d.uid}>{d.name}</MenuItem>)
-                                })}
-                            </SplitButton>
+                            { this.state.selectedDepartment ?
+                                <SplitButton title={this.state.selectedDepartment.name} id="departments">
+                                   { this.state.departments.map((d, i) => {
+                                        return (<MenuItem
+                                            key={d.uid}
+                                            eventKey={d.uid}
+                                            onSelect={this.departmentChange.bind(this, d)}
+                                        >{d.name}</MenuItem>)
+                                    })}
+                                </SplitButton>
+                                : null
+                            }
                         </td>
                         <td colSpan="31">
                             <Pager>
@@ -82,24 +98,22 @@ export class Employees extends React.Component {
                     </tr>
 
                     <tr>
-                        <td>
-
-                        </td>
-                        { daysOfYear.map(d => {
+                        <td></td>
+                        { daysOfYear.map((d, i) => {
                             let isToday = d.toLocaleDateString() === new Date().toLocaleDateString();
-                            return (<td className="day"><div className={isToday ? "today" : ""}>{ this.localizeDayOfWeek(d) }</div></td>)
+                            return (<td className="day" key={i}><div className={isToday ? "today" : ""}>{ this.localizeDayOfWeek(d) }</div></td>)
                         })}
                     </tr>
                 </thead>
 
                 <tbody>
-                    { this.state.employees.map(e => {
+                    { this.state.employees.map((e, i) => {
                         return (
-                            <tr>
+                            <tr key={"emp" + i}>
                                 <th className="person">
                                     <Media>
                                         <Media.Left>
-                                            <Badge>42</Badge>
+                                            <Badge>42 <small>&#189;</small></Badge>
                                             <Gravatar email={ e.email } />
                                         </Media.Left>
                                         <Media.Body>
@@ -108,9 +122,9 @@ export class Employees extends React.Component {
                                         </Media.Body>
                                     </Media>
                                 </th>
-                                { daysOfYear.map(d => {
+                                { daysOfYear.map((d, i) => {
                                     let clazz = d.getDay() in [5, 6] ? "wd day" : "nwd day";
-                                    return (<td className={clazz} >{ d.getDate() }</td>)
+                                    return (<td className={clazz} key={e.email + i}>{ d.getDate() }</td>)
                                 })}
                             </tr>
                         )

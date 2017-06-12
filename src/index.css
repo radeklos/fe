@@ -22,7 +22,7 @@ th.person {
 }
 
 th.person .media {
-    margin-left: 8px;
+    margin-left: 15px;
 }
 
 th.person .media h4 {
@@ -66,6 +66,25 @@ table.employees > thead > tr > td.day > div {
     border: 1px solid transparent;
 }
 
+table.employees > tbody > tr > td,
+table.employees > tbody > tr > th,
+table.employees > tfoot > tr > td,
+table.employees > tfoot > tr > th,
+table.employees > thead > tr > td,
+table.employees > thead > tr > th {
+    padding: 8px 0;
+}
+
 table.employees ul.pager {
     margin: 0;
+}
+
+.badge small {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+table.employees .dropdown button:first-child {
+    min-width: 160px;
+    text-align: left;
 }
