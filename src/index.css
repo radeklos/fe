@@ -18,7 +18,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 th.person {
-    min-width: 240px
+    width: 200px;
+    min-width: 200px;
+}
+
+div.employeeHeader {
+    margin-bottom: 12px;
+}
+
+div.employeeHeader button:first-child {
+    min-width: 120px;
+    text-align: left;
+}
+
+div.employeeHeader ul.pager {
+    margin: 0;
 }
 
 th.person .media {
@@ -75,16 +89,7 @@ table.employees > thead > tr > th {
     padding: 8px 0;
 }
 
-table.employees ul.pager {
-    margin: 0;
-}
-
 .badge small {
     font-weight: normal;
     font-size: 100%;
-}
-
-table.employees .dropdown button:first-child {
-    min-width: 160px;
-    text-align: left;
 }

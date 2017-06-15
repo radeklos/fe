@@ -1,6 +1,6 @@
 import React from "react";
 
-import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button} from "react-bootstrap";
+import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col} from "react-bootstrap";
 
 import SessionManager from "./../services/Session.jsx";
 import {GetDepartment} from '../api/Companies'
@@ -35,14 +35,6 @@ export class Employees extends React.Component {
         this.setState({employees: response});
     }
 
-    localizeMonth(date) {
-        return date.toLocaleString("en-us", {month: "short"});
-    }
-
-    localizeDayOfWeek(date) {
-        return date.toLocaleString("en-us", {weekday: "short"})[0];
-    }
-
     loadEmployees(departmentId) {
         let user = SessionManager.get();
         GetDepartmentEmployees(user.getCompanyId(), departmentId, {onSuccess: this.pupulateListOfEmployees.bind(this)});
@@ -51,6 +43,51 @@ export class Employees extends React.Component {
     departmentChange(d) {
         this.setState({selectedDepartment: d});
         this.loadEmployees(d.uid);
+    }
+
+    render() {
+        return (
+            <div>
+                <Button bsStyle="primary" className="pull-right">Book time off</Button>
+                <h1>Your company</h1>
+                <Row className="employeeHeader">
+                    <Col md={2}>
+                        { this.state.selectedDepartment ?
+                            <SplitButton title={this.state.selectedDepartment.name} id="departments">
+                               { this.state.departments.map((d, i) => {
+                                    return (<MenuItem
+                                        key={d.uid}
+                                        eventKey={d.uid}
+                                        onSelect={this.departmentChange.bind(this, d)}
+                                    >{d.name}</MenuItem>)
+                                })}
+                            </SplitButton>
+                            : null
+                        }
+                    </Col>
+                    <Col md={10}>
+                        <Pager>
+                            <Pager.Item previous href="#">&larr; Previous</Pager.Item>
+                            <Pager.Item next href="#">Next &rarr;</Pager.Item>
+                        </Pager>
+                    </Col>
+                </Row>
+
+                <EmployeesTable employees={this.state.employees} />
+            </div>
+        )
+    }
+}
+
+
+class EmployeesTable extends React.Component {
+
+    localizeMonth(date) {
+        return date.toLocaleString("en-us", {month: "short"});
+    }
+
+    localizeDayOfWeek(date) {
+        return date.toLocaleString("en-us", {weekday: "short"})[0];
     }
 
     render() {
@@ -69,33 +106,8 @@ export class Employees extends React.Component {
         }
 
         return (
-            <div>
-                <Button bsStyle="primary" className="pull-right">Book time off</Button>
-                <h1>Your company</h1>
-                <Table responsive className="employees">
+            <Table responsive className="employees">
                 <thead>
-                    <tr>
-                        <td>
-                            { this.state.selectedDepartment ?
-                                <SplitButton title={this.state.selectedDepartment.name} id="departments">
-                                   { this.state.departments.map((d, i) => {
-                                        return (<MenuItem
-                                            key={d.uid}
-                                            eventKey={d.uid}
-                                            onSelect={this.departmentChange.bind(this, d)}
-                                        >{d.name}</MenuItem>)
-                                    })}
-                                </SplitButton>
-                                : null
-                            }
-                        </td>
-                        <td colSpan="31">
-                            <Pager>
-                                <Pager.Item previous href="#">&larr; Previous</Pager.Item>
-                                <Pager.Item next href="#">Next &rarr;</Pager.Item>
-                            </Pager>
-                        </td>
-                    </tr>
 
                     <tr>
                         <td></td>
@@ -107,7 +119,7 @@ export class Employees extends React.Component {
                 </thead>
 
                 <tbody>
-                    { this.state.employees.map((e, i) => {
+                    { this.props.employees.map((e, i) => {
                         return (
                             <tr key={"emp" + i}>
                                 <th className="person">
@@ -130,8 +142,7 @@ export class Employees extends React.Component {
                         )
                     })}
                 </tbody>
-              </Table>
-            </div>
+            </Table>
         )
     }
 }
