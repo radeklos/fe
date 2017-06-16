@@ -14,11 +14,18 @@ export class Employees extends React.Component {
 
     constructor(props) {
         super(props);
+
+        let firstDay = new Date();
+        let lastDay = new Date();
+        lastDay.setDate(lastDay.getDate() + 30)
+
         this.state = {
             showBookTimeOffModal: false,
             selectedDepartment: null,
             departments: [],
-            employees: []
+            employees: [],
+            firstDay: firstDay,
+            lastDay: lastDay,
         };
     }
 
@@ -48,6 +55,16 @@ export class Employees extends React.Component {
         this.loadEmployees(d.uid);
     }
 
+    changeMonth(step) {
+        let firstDay = new Date(this.state.firstDay.getFullYear(), this.state.firstDay.getMonth() + step, 1);
+        let lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0);
+
+        this.setState({
+            firstDay: firstDay,
+            lastDay: lastDay
+        })
+    }
+
     render() {
         return (
             <div>
@@ -72,13 +89,16 @@ export class Employees extends React.Component {
                     </Col>
                     <Col md={10}>
                         <Pager>
-                            <Pager.Item previous href="#">&larr; Previous</Pager.Item>
-                            <Pager.Item next href="#">Next &rarr;</Pager.Item>
+                            <Pager.Item previous href="#" onClick={this.changeMonth.bind(this, -1)}>&larr; Previous</Pager.Item>
+                            <Pager.Item next href="#" onClick={this.changeMonth.bind(this, 1)}>Next &rarr;</Pager.Item>
                         </Pager>
                     </Col>
                 </Row>
 
-                <EmployeesTable employees={this.state.employees} />
+                <EmployeesTable
+                    employees={this.state.employees}
+                    firstDay={this.state.firstDay}
+                    lastDay={this.state.lastDay} />
             </div>
         )
     }
@@ -86,20 +106,6 @@ export class Employees extends React.Component {
 
 
 class EmployeesTable extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        let firstDay = new Date();
-        let lastDay = new Date();
-        lastDay.setDate(lastDay.getDate() + 30)
-
-        this.state = {
-            firstDay: firstDay,
-            lastDay: lastDay,
-        }
-        console.log(this.state);
-    }
 
     localizeMonth(date) {
         return date.toLocaleString("en-us", {month: "short"});
@@ -114,14 +120,14 @@ class EmployeesTable extends React.Component {
     }
 
     render() {
-        let days = this.calculateDays(this.state.firstDay, this.state.lastDay);
+        let days = this.calculateDays(this.props.firstDay, this.props.lastDay);
 
         return (
             <Table responsive className="employees">
                 <thead>
                     <tr>
                         <td></td>
-                        <td><DaysHeader days={days} /></td>
+                        <td style={{padding: 0}}><DaysHeader days={days} /></td>
                     </tr>
                 </thead>
 
@@ -141,9 +147,7 @@ class EmployeesTable extends React.Component {
                                         </Media.Body>
                                     </Media>
                                 </th>
-                                <td>
-                                    <Days days={days} />
-                                </td>
+                                <td style={{padding: 0}}><Days days={days} /></td>
                             </tr>
                         )
                     })}
@@ -182,8 +186,14 @@ class Days extends React.Component {
                 <tbody>
                     <tr>
                         { this.props.days.map((d, i) => {
-                            let clazz = d.getDay() in [5, 6] ? "wd day" : "nwd day";
-                            return (<td className={clazz} key={i}><div className="content">{ d.getDate() }</div></td>)
+                            let clazz = d.getDay() in [4, 5] ? "wd day" : "nwd day";
+                            return (
+                                <td className={clazz} key={i}>
+                                    <div className="content">{ d.getDate() }</div>
+                                    <div className="first"></div>
+                                    <div className="second"></div>
+                                </td>
+                            )
                         })}
                     </tr>
                 </tbody>
