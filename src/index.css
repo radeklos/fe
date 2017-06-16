@@ -48,48 +48,52 @@ th.person .media .badge {
     margin-left: -15px;
 }
 
-table.employees > * > tr > td.day {
-    padding: 6px;
-    width: 29px !important;
-    min-width:  29px !important;
-    max-width: 29px !important;
-    height: 29px;
-    font-size: 13px;
+table.employees table.table {
+    margin: 0;
+    background: none;
+}
+
+table.employees table td {
+    width: 30px !important;
+    min-width:  30px !important;
+    max-width: 30px !important;
+    font-size: 12px;
     text-align: center;
+    border: 0;
+    position: relative;
 }
 
-table.employees > thead > tr > td.day {
-    vertical-align: bottom;
+table.employees table td:after {
+    content: '';
+    display: block;
+    margin-top: 100%;
 }
 
-table.employees > tbody > tr > td.wd {
+table.employees table td.wd {
     background-color: #E6E6E6;
 }
 
-table.employees > tbody > tr > td.nwd {
-}
-
-table.employees > thead > tr > td.day div.today {
-    border-color: #ddd;
-}
-
-table.employees > thead > tr > td.day > div {
+table.employees tr td.today {
+    background-color: #E6E6E6;
     border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    border: 1px solid transparent;
 }
 
-table.employees > tbody > tr > td,
-table.employees > tbody > tr > th,
-table.employees > tfoot > tr > td,
-table.employees > tfoot > tr > th,
-table.employees > thead > tr > td,
-table.employees > thead > tr > th {
-    padding: 8px 0;
+table.employees table td .content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-top: 6px;
 }
 
 .badge small {
     font-weight: normal;
     font-size: 100%;
+}
+
+@media (min-width: 768px) {
+    div.requestTimeOffModal > div.modal-dialog {
+        width: 660px;
+    }
 }

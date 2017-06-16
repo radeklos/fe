@@ -1,11 +1,13 @@
 import React from "react";
 
-import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col} from "react-bootstrap";
+import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col, Modal, Form, FormGroup, ControlLabel, FormControl, InputGroup, DropdownButton} from "react-bootstrap";
 
 import SessionManager from "./../services/Session.jsx";
 import {GetDepartment} from '../api/Companies'
 import {GetDepartmentEmployees} from '../api/Employees'
 import {Gravatar} from '../components/Gravatar'
+import {FieldGroup} from "../forms/FormField.jsx";
+import FormButton from "../forms/FormButton.jsx";
 
 
 export class Employees extends React.Component {
@@ -13,6 +15,7 @@ export class Employees extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            showBookTimeOffModal: false,
             selectedDepartment: null,
             departments: [],
             employees: []
@@ -48,7 +51,9 @@ export class Employees extends React.Component {
     render() {
         return (
             <div>
-                <Button bsStyle="primary" className="pull-right">Book time off</Button>
+                { this.state.showBookTimeOffModal && <BookTimeOffModal close={() => this.setState({showBookTimeOffModal: false})} /> }
+                <Button bsStyle="primary" className="pull-right" onClick={() => this.setState({showBookTimeOffModal: true})}>Book time off</Button>
+
                 <h1>Your company</h1>
                 <Row className="employeeHeader">
                     <Col md={2}>
@@ -82,39 +87,41 @@ export class Employees extends React.Component {
 
 class EmployeesTable extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        let firstDay = new Date();
+        let lastDay = new Date();
+        lastDay.setDate(lastDay.getDate() + 30)
+
+        this.state = {
+            firstDay: firstDay,
+            lastDay: lastDay,
+        }
+        console.log(this.state);
+    }
+
     localizeMonth(date) {
         return date.toLocaleString("en-us", {month: "short"});
     }
 
-    localizeDayOfWeek(date) {
-        return date.toLocaleString("en-us", {weekday: "short"})[0];
+    calculateDays(firstDay, lastDay) {
+        let days = [];
+        for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
+            days.push(new Date(d));
+        }
+        return days;
     }
 
     render() {
-        let firstDate = new Date();
-        let lastDay = new Date();
-        lastDay.setDate(lastDay.getDate() + 30)
-        let daysOfYear = [];
-        let month = {};
-        for (let d = firstDate; d <= lastDay; d.setDate(d.getDate() + 1)) {
-            daysOfYear.push(new Date(d));
-            let monthName = this.localizeMonth(d);
-            if (!month[monthName]) {
-                month[monthName] = 0;
-            }
-            month[monthName] += 1;
-        }
+        let days = this.calculateDays(this.state.firstDay, this.state.lastDay);
 
         return (
             <Table responsive className="employees">
                 <thead>
-
                     <tr>
                         <td></td>
-                        { daysOfYear.map((d, i) => {
-                            let isToday = d.toLocaleDateString() === new Date().toLocaleDateString();
-                            return (<td className="day" key={i}><div className={isToday ? "today" : ""}>{ this.localizeDayOfWeek(d) }</div></td>)
-                        })}
+                        <td><DaysHeader days={days} /></td>
                     </tr>
                 </thead>
 
@@ -134,15 +141,126 @@ class EmployeesTable extends React.Component {
                                         </Media.Body>
                                     </Media>
                                 </th>
-                                { daysOfYear.map((d, i) => {
-                                    let clazz = d.getDay() in [5, 6] ? "wd day" : "nwd day";
-                                    return (<td className={clazz} key={e.email + i}>{ d.getDate() }</td>)
-                                })}
+                                <td>
+                                    <Days days={days} />
+                                </td>
                             </tr>
                         )
                     })}
                 </tbody>
             </Table>
         )
+    }
+}
+
+class DaysHeader extends React.Component {
+
+    localizeDayOfWeek(date) {
+        return date.toLocaleString("en-us", {weekday: "short"})[0];
+    }
+
+    render() {
+        return (
+            <Table>
+                <tbody>
+                    <tr>
+                        { this.props.days.map((d, i) => {
+                            let clazz = d.toLocaleDateString() === new Date().toLocaleDateString() ? "today day" : "day";
+                            return (<td className={clazz} key={i}><div className="content">{ this.localizeDayOfWeek(d) }</div></td>)
+                        })}
+                    </tr>
+                </tbody>
+            </Table>
+        )
+    }
+}
+
+class Days extends React.Component {
+    render() {
+        return (
+            <Table>
+                <tbody>
+                    <tr>
+                        { this.props.days.map((d, i) => {
+                            let clazz = d.getDay() in [5, 6] ? "wd day" : "nwd day";
+                            return (<td className={clazz} key={i}><div className="content">{ d.getDate() }</div></td>)
+                        })}
+                    </tr>
+                </tbody>
+            </Table>
+        )
+    }
+}
+
+class BookTimeOffModal extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false
+        }
+    }
+
+    render() {
+        return (
+        <Form onSubmit={this.onSubmit} method="post" autoComplete="off">
+            <Modal show={true} onHide={this.props.close} className="requestTimeOffModal">
+                <Modal.Header closeButton>
+                    <Modal.Title>Request time off</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <FieldGroup
+                        id="formControlsText"
+                        type="text"
+                        label="Type"
+                        placeholder="Type"
+                    />
+                    <Row>
+                        <Col md={6}>
+                            <FormGroup>
+                                <ControlLabel>Starting</ControlLabel>
+                                <InputGroup>
+                                    <FormControl type="date" />
+                                    <DropdownButton
+                                      componentClass={InputGroup.Button}
+                                      id="input-dropdown-addon"
+                                      title="Morning"
+                                    >
+                                    <MenuItem key="1">Morning</MenuItem>
+                                    <MenuItem key="2">Afternoon</MenuItem>
+                                </DropdownButton>
+                              </InputGroup>
+                            </FormGroup>
+                        </Col>
+                        <Col md={6}>
+                            <FormGroup>
+                                <ControlLabel>Ending</ControlLabel>
+                                <InputGroup>
+                                    <FormControl type="date" />
+                                    <DropdownButton
+                                      componentClass={InputGroup.Button}
+                                      id="input-dropdown-addon"
+                                      title="Lunchtime"
+                                    >
+                                    <MenuItem key="1">Lunchtime</MenuItem>
+                                    <MenuItem key="2">End of Day</MenuItem>
+                                </DropdownButton>
+                              </InputGroup>
+                            </FormGroup>
+                        </Col>
+                    </Row>
+
+                    <FormGroup controlId="formControlsTextarea">
+                        <ControlLabel>Reason</ControlLabel>
+                        <FormControl componentClass="textarea" placeholder="Reason for time off" />
+                    </FormGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={this.props.close}>Close</Button>
+                    <FormButton isLoading={ this.state.isLoading } bsStyle="success">Send request</FormButton>
+                </Modal.Footer>
+            </Modal>
+        </Form>
+        );
     }
 }
