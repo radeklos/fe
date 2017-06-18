@@ -65,7 +65,14 @@ export class Employees extends React.Component {
         })
     }
 
+    localizeMonth(date) {
+        return date.toLocaleString("en-us", {month: "long"});
+    }
+
     render() {
+        let showSecondMonth = this.state.firstDay.getMonth() !== this.state.lastDay.getMonth();
+        let showYear = (new Date()).getFullYear() !== this.state.lastDay.getFullYear()
+
         return (
             <div>
                 { this.state.showBookTimeOffModal && <BookTimeOffModal close={() => this.setState({showBookTimeOffModal: false})} /> }
@@ -89,9 +96,19 @@ export class Employees extends React.Component {
                     </Col>
                     <Col md={10}>
                         <Pager>
-                            <Pager.Item previous href="#" onClick={this.changeMonth.bind(this, -1)}>&larr; Previous</Pager.Item>
-                            <Pager.Item next href="#" onClick={this.changeMonth.bind(this, 1)}>Next &rarr;</Pager.Item>
-                        </Pager>
+                            <Row>
+                                <Col md={4}><Pager.Item previous href="#" onClick={this.changeMonth.bind(this, -1)}>&larr; Previous</Pager.Item></Col>
+                                <Col md={4}>
+                                    <h4>
+                                        { this.localizeMonth(this.state.firstDay) }{" "}
+                                        { showSecondMonth ? (<small>to</small>) : ""}{" "}
+                                        { showSecondMonth ? this.localizeMonth(this.state.lastDay) : "" }{" "}
+                                        { showYear ? this.state.lastDay.getFullYear() : "" }
+                                    </h4>
+                                </Col>
+                                <Col md={4}><Pager.Item next href="#" onClick={this.changeMonth.bind(this, 1)}>Next &rarr;</Pager.Item></Col>
+                            </Row>
+                         </Pager>
                     </Col>
                 </Row>
 
@@ -106,10 +123,6 @@ export class Employees extends React.Component {
 
 
 class EmployeesTable extends React.Component {
-
-    localizeMonth(date) {
-        return date.toLocaleString("en-us", {month: "short"});
-    }
 
     calculateDays(firstDay, lastDay) {
         let days = [];
@@ -168,9 +181,14 @@ class DaysHeader extends React.Component {
             <Table>
                 <tbody>
                     <tr>
-                        { this.props.days.map((d, i) => {
-                            let clazz = d.toLocaleDateString() === new Date().toLocaleDateString() ? "today day" : "day";
-                            return (<td className={clazz} key={i}><div className="content">{ this.localizeDayOfWeek(d) }</div></td>)
+                        { new Array(31).fill().map((_, i) => {
+                            let day = this.props.days[i];
+                            if (day !== undefined) {
+                                let clazz = day.toLocaleDateString() === new Date().toLocaleDateString() ? "today day" : "day";
+                                return (<td className={clazz} key={i}><div className="content">{ this.localizeDayOfWeek(day) }</div></td>);
+                            } else {
+                                return (<td className="day" key={i}/>);
+                            }
                         })}
                     </tr>
                 </tbody>
@@ -180,20 +198,34 @@ class DaysHeader extends React.Component {
 }
 
 class Days extends React.Component {
+
+    select (day) {
+        console.log(day);
+    }
+
     render() {
         return (
             <Table>
                 <tbody>
                     <tr>
-                        { this.props.days.map((d, i) => {
-                            let clazz = d.getDay() in [4, 5] ? "wd day" : "nwd day";
-                            return (
-                                <td className={clazz} key={i}>
-                                    <div className="content">{ d.getDate() }</div>
-                                    <div className="first"></div>
-                                    <div className="second"></div>
-                                </td>
-                            )
+                        { new Array(31).fill().map((_, i) => {
+                            let day = this.props.days[i];
+                            if (day !== undefined) {
+                                let clazz = day.getDay() in [6, 0] ? "wd day" : "nwd day";
+                                return (
+                                    <td
+                                        className={clazz}
+                                        key={i}
+                                        onDrag={this.select.bind(this, day)}
+                                    >
+                                        <div className="content">{ day.getDate() }</div>
+                                        <div className="first"></div>
+                                        <div className="second"></div>
+                                    </td>
+                                )
+                            } else {
+                                return (<td className="day" key={i}/>);
+                            }
                         })}
                     </tr>
                 </tbody>
