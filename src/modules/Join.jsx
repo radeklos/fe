@@ -9,17 +9,18 @@ import {PerformRegistration} from "../api/Users.jsx";
 import {browserHistory} from "react-router";
 
 
-export const Join = React.createClass({
+export class Join extends React.Component {
 
-    getInitialState: function () {
-        return {
+    constructor () {
+        super(props);
+        this.state = {
             data: {},
             errors: {},
             isLoading: false
         };
-    },
+    }
 
-    onSubmit: function (e) {
+    onSubmit (e) {
         this.verifyPassword();
         if (Object.keys(this.state.errors).length === 0) {
             this.setState({
@@ -49,9 +50,9 @@ export const Join = React.createClass({
             })
         }
         e.preventDefault();
-    },
+    }
 
-    onChange: function (e) {
+    onChange (e) {
         let data = this.state.data;
         let errors = this.state.errors;
         data[e.target.name] = e.target.value;
@@ -60,9 +61,9 @@ export const Join = React.createClass({
             data: data,
             errors: errors
         })
-    },
+    }
 
-    verifyPassword: function () {
+    verifyPassword () {
         let passwordVerified = this.state.data.hasOwnProperty('verifyPassword') ? this.state.data.verifyPassword : "";
         const errors = this.state.errors;
         delete errors["verifyPassword"];
@@ -122,18 +123,14 @@ export const Join = React.createClass({
             </Form>
         </div>)
     }
-})
+}
 
-export const Finished = React.createClass({
 
-    getInitialState: function () {
-        return {};
-    },
-
+export class Finished extends React.Component {
     render() {
         return (<div>
             <h1>Check your email</h1>
             <p>{"We've send a message to your email. Open it up and click Active Account. We'll take if from there."}</p>
         </div>)
     }
-})
+}

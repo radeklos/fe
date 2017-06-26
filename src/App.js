@@ -6,7 +6,7 @@ import {browserHistory} from "react-router";
 import {MenuItem, Modal, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
 
-import LogInForm from "./forms/LogInForm.jsx";
+import {LogInForm} from "./forms/LogInForm.jsx";
 import SessionManager from "./services/Session.jsx";
 import {GetDetails} from "./api/Users.jsx";
 
@@ -98,10 +98,10 @@ class App extends React.Component {
         const login = (
             <Modal show={this.state.show} onHide={this.hideModalLogIn.bind(this)}>
                 <Modal.Body>
-                    <LogInForm onSuccessLogin={this.onSuccessLogin.bind(this)}/>
+                    <LogInForm onSuccessLogin={this.onSuccessLogin.bind(this)} />
                 </Modal.Body>
                 <Modal.Footer>
-                    {"Don't have an account?"}
+                    {"Don't you have an account?"}
                 </Modal.Footer>
             </Modal>
         );

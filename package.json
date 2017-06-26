@@ -3,24 +3,42 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "jest": "^20.0.4",
     "md5": "^2.2.1",
-    "prop-types": "^15.5.8",
-    "react": "^15.4.2",
-    "react-bootstrap": "^0.30.5",
-    "react-cookie": "^0.4.8",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-bootstrap": "^0.30.10",
+    "react-cookie": "^0.4.9",
+    "react-dom": "^15.6.1",
     "react-router": "^2.8.1",
-    "react-router-bootstrap": "^0.23.1",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.16.2",
-    "whatwg-fetch": "^1.0.0"
+    "react-router-bootstrap": "^0.23.3",
+    "webpack": "^1.15.0",
+    "webpack-dev-server": "^1.16.5",
+    "whatwg-fetch": "^1.1.1"
   },
   "devDependencies": {
-    "react-scripts": "0.9.5"
+    "chai": "^4.0.2",
+    "enzyme": "^2.9.1",
+    "react-scripts": "0.9.5",
+    "react-test-renderer": "^15.6.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --testPathPattern *.test.js",
     "eject": "react-scripts eject"
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/radeklos/fe.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/radeklos/fe/issues"
+  },
+  "homepage": "https://github.com/radeklos/fe#readme"
 }

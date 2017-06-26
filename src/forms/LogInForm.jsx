@@ -5,17 +5,18 @@ import SessionManager from "../services/Session.jsx";
 import {PerformLogin} from "../api/Users.jsx";
 
 
-export default React.createClass({
+export class LogInForm extends React.Component {
 
-    getInitialState: function () {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             isLoading: false,
             data: {},
             error: '',
         }
-    },
+    }
 
-    onSubmit: function (e) {
+    onSubmit(e) {
         PerformLogin({
             body: {
                 login: this.state.data.login,
@@ -35,17 +36,17 @@ export default React.createClass({
             }.bind(this)
         })
         e.preventDefault();
-    },
+    }
 
-    onChange: function (e) {
+    onChange(e) {
         var data = this.state.data
         data[e.target.name] = e.target.value
         this.setState({
             data: data,
         })
-    },
+    }
 
-    alert: function (error) {
+    alert(error) {
         if (error) {
             return (
                 <Alert bsStyle="danger" onDismiss={this.handleAlertDismiss}>
@@ -54,7 +55,7 @@ export default React.createClass({
                 </Alert>
             )
         }
-    },
+    }
 
     render() {
         return (
@@ -95,4 +96,5 @@ export default React.createClass({
             </Form>
         );
     }
-})
+
+}

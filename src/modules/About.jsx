@@ -1,7 +1,10 @@
 import React from "react";
 
-export default React.createClass({
+
+export class About extends React.Component {
+
     render() {
         return <div>About</div>
     }
-})
+
+}

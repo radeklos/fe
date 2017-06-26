@@ -97,8 +97,8 @@ export class Employees extends React.Component {
                     <Col md={10}>
                         <Pager>
                             <Row>
-                                <Col md={4}><Pager.Item previous href="#" onClick={this.changeMonth.bind(this, -1)}>&larr; Previous</Pager.Item></Col>
-                                <Col md={4}>
+                                <Col xs={4}><Pager.Item previous href="#" onClick={this.changeMonth.bind(this, -1)}>&larr; Previous</Pager.Item></Col>
+                                <Col xs={4}>
                                     <h4>
                                         { this.localizeMonth(this.state.firstDay) }{" "}
                                         { showSecondMonth ? (<small>to</small>) : ""}{" "}
@@ -106,7 +106,7 @@ export class Employees extends React.Component {
                                         { showYear ? this.state.lastDay.getFullYear() : "" }
                                     </h4>
                                 </Col>
-                                <Col md={4}><Pager.Item next href="#" onClick={this.changeMonth.bind(this, 1)}>Next &rarr;</Pager.Item></Col>
+                                <Col xs={4}><Pager.Item next href="#" onClick={this.changeMonth.bind(this, 1)}>Next &rarr;</Pager.Item></Col>
                             </Row>
                          </Pager>
                     </Col>
