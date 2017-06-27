@@ -7,7 +7,7 @@ import {Gravatar} from './Gravatar';
 
 describe('<Gravatar />', function() {
 
-    it('renders welcome message', () => {
+    it('has rigth props', () => {
         const wrapper = shallow(<Gravatar email='example@example.com' />);
 
         expect(wrapper.prop('circle')).to.equal(true)

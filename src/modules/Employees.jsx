@@ -122,7 +122,7 @@ export class Employees extends React.Component {
 }
 
 
-class EmployeesTable extends React.Component {
+export class EmployeesTable extends React.Component {
 
     calculateDays(firstDay, lastDay) {
         let days = [];
@@ -130,6 +130,11 @@ class EmployeesTable extends React.Component {
             days.push(new Date(d));
         }
         return days;
+    }
+
+    toFraction(num) {
+        if (Math.floor(num) !== num) return (<small>&#189;</small>);  // 1/2
+        return null;
     }
 
     render() {
@@ -151,7 +156,7 @@ class EmployeesTable extends React.Component {
                                 <th className="person">
                                     <Media>
                                         <Media.Left>
-                                            <Badge>42 <small>&#189;</small></Badge>
+                                            <Badge>{ Math.floor(e.remaining) }{ this.toFraction(e.remaining) }</Badge>
                                             <Gravatar email={ e.email } />
                                         </Media.Left>
                                         <Media.Body>
@@ -197,11 +202,7 @@ class DaysHeader extends React.Component {
     }
 }
 
-class Days extends React.Component {
-
-    select (day) {
-        console.log(day);
-    }
+export class Days extends React.Component {
 
     render() {
         return (
@@ -211,20 +212,16 @@ class Days extends React.Component {
                         { new Array(31).fill().map((_, i) => {
                             let day = this.props.days[i];
                             if (day !== undefined) {
-                                let clazz = day.getDay() in [6, 0] ? "wd day" : "nwd day";
+                                let clazz = [0, 6].indexOf(day.getDay()) > -1 ? "wd day" : "nwd day";
                                 return (
-                                    <td
-                                        className={clazz}
-                                        key={i}
-                                        onDrag={this.select.bind(this, day)}
-                                    >
+                                    <td className={clazz} key={i}>
                                         <div className="content">{ day.getDate() }</div>
                                         <div className="first"></div>
                                         <div className="second"></div>
                                     </td>
                                 )
                             } else {
-                                return (<td className="day" key={i}/>);
+                                return (<td className="day" key={i} />);
                             }
                         })}
                     </tr>
@@ -233,6 +230,7 @@ class Days extends React.Component {
         )
     }
 }
+
 
 class BookTimeOffModal extends React.Component {
 
