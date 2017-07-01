@@ -5,21 +5,12 @@ import {Button, Jumbotron} from "react-bootstrap";
 import CompanyForm from "../forms/CompanyForm.jsx";
 import {ImportEmployeesModal} from "./ImportEmployees";
 import {Employees} from "./Employees"
-import SessionManager from "./../services/Session.jsx";
-import {browserHistory} from "react-router";
 
 
 export class U extends React.Component {
 
-    componentWillMount() {
-        let user = SessionManager.get();
-        if (!user.isInCompany()) {
-            browserHistory.push('/newcomers')
-        }
-    }
-
     render() {
-        if(this.props.user) {
+        if(this.props.isLogIn) {
             return (
                 <div>
                     <Employees />
@@ -45,7 +36,7 @@ export class CreateCompany extends React.Component {
     }
 
     onFormSuccess(data) {
-        browserHistory.push('/newcomers/import-employees')
+        this.props.history.push('/newcomers/import-employees')
     }
 
     render() {

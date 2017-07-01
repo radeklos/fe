@@ -8,6 +8,7 @@ import {GetDepartmentEmployees} from '../api/Employees'
 import {Gravatar} from '../components/Gravatar'
 import {FieldGroup} from "../forms/FormField.jsx";
 import FormButton from "../forms/FormButton.jsx";
+import {GetLeaves} from "../api/Leaves";
 
 
 export class Employees extends React.Component {
@@ -30,19 +31,21 @@ export class Employees extends React.Component {
     }
 
     componentDidMount() {
-        let user = SessionManager.get();
-        GetDepartment(user.getCompanyId(), {onSuccess: this.pupulateListOfDepartments.bind(this)})
+        GetDepartment({onSuccess: this.pupulateListOfDepartments.bind(this)});
+        GetLeaves({onSuccess: this.pupulateListOfEmployees.bind(this)});
+    }
+
+    pupulateListOfEmployees(response) {
+        this.setState({employees: response.items});
     }
 
     pupulateListOfDepartments(response) {
         let departments = response.map(d => {
             return {name: d.name, uid: d.uid}
         });
-        this.setState({departments: departments}, this.departmentChange(departments[0]));
-    }
-
-    pupulateListOfEmployees(response) {
-        this.setState({employees: response});
+        if (departments.length > 0) {
+            this.setState({departments: departments}, this.departmentChange(departments[0]));
+        }
     }
 
     loadEmployees(departmentId) {
@@ -146,17 +149,18 @@ class EmployeesTable extends React.Component {
 
                 <tbody>
                     { this.props.employees.map((e, i) => {
+                        const person = e.employee;
                         return (
                             <tr key={"emp" + i}>
                                 <th className="person">
                                     <Media>
                                         <Media.Left>
                                             <Badge>42 <small>&#189;</small></Badge>
-                                            <Gravatar email={ e.email } />
+                                            <Gravatar email={ person.email } />
                                         </Media.Left>
                                         <Media.Body>
-                                            <Media.Heading>{ e.firstName } { e.lastName }</Media.Heading>
-                                            <p>{ e.department }</p>
+                                            <Media.Heading>{ person.firstName } { person.lastName }</Media.Heading>
+                                            <p>{ person.department }</p>
                                         </Media.Body>
                                     </Media>
                                 </th>

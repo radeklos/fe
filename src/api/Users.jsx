@@ -2,44 +2,22 @@ import "whatwg-fetch";
 import SessionManager from "../services/Session.jsx";
 import {config} from "../config";
 
+import {fetchHandler} from "./handler.jsx";
+
 
 export function PerformRegistration(actionObject) {
-    fetch(config.SERVER_URL + '/v1/users', {
+    fetchHandler(fetch(config.SERVER_URL + '/v1/users', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(actionObject.body)
-    })
-    .then(function (response) {
-        if (response.status >= 200 && response.status < 300) {
-            return Promise.resolve(response)
-        } else {
-            const error = new Error(response.statusText);
-            error.response = response;
-            throw error
-        }
-    })
-    .then(function (response) {
-        return response.json()
-    })
-    .then(function (json) {
-        if (actionObject.hasOwnProperty('onSuccess')) {
-            actionObject.onSuccess(json)
-        }
-    })
-    .catch(function (error) {
-        return error.response.json().then(function (json) {
-            if (actionObject.hasOwnProperty('onError')) {
-                actionObject.onError(json)
-            }
-        })
-    })
+    }), actionObject);
 }
 
 export function PerformLogin(actionObject) {
-    fetch(config.SERVER_URL + '/v1/auth/login', {
+    fetchHandler(fetch(config.SERVER_URL + '/v1/auth/login', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -49,65 +27,16 @@ export function PerformLogin(actionObject) {
             username: actionObject.body.login,
             password: actionObject.body.password
         })
-    })
-    .then(function (response) {
-        if (response.status >= 200 && response.status < 300) {
-            return Promise.resolve(response)
-        } else {
-            const error = new Error(response.statusText);
-            error.response = response;
-            throw error
-        }
-    })
-    .then(function (response) {
-        return response.json()
-    })
-    .then(function (json) {
-        if (actionObject.hasOwnProperty('onSuccess')) {
-            actionObject.onSuccess(json)
-        }
-    })
-    .catch(function (error) {
-        const handleError = function (json) {
-            if (actionObject.hasOwnProperty('onError')) {
-                actionObject.onError(json)
-            }
-        };
-        handleError()
-    })
+    }), actionObject);
 }
 
 export function GetDetails(actionObject) {
-    fetch(config.SERVER_URL + '/v1/users/me', {
+    fetchHandler(fetch(config.SERVER_URL + '/v1/users/me', {
         method: 'GET',
         headers: {
-            'X-Authorization': "Bearer " + SessionManager.get().token,
+            'X-Authorization': "Bearer " + SessionManager.getToken(),
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-    }).then(function (response) {
-        if (response.status >= 200 && response.status < 300) {
-            return Promise.resolve(response)
-        } else {
-            const error = new Error(response.statusText);
-            error.response = response;
-            throw error
-        }
-    })
-    .then(function (response) {
-        return response.json()
-    })
-    .then(function (json) {
-        if (actionObject.hasOwnProperty('onSuccess')) {
-            actionObject.onSuccess(json)
-        }
-    })
-    .catch(function (error) {
-        const handleError = function (json) {
-            if (actionObject.hasOwnProperty('onError')) {
-                actionObject.onError(json)
-            }
-        };
-        handleError()
-    })
+    }), actionObject);
 }

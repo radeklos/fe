@@ -1,15 +1,8 @@
-import cookie from "react-cookie";
-
-import {GetDetails} from "./../api/Users.jsx";
 
 class User {
 
-    constructor(token) {
-        this.token = token
-    }
-
-    setDetails(details) {
-        cookie.save('user', {details: details});
+    constructor(user) {
+        this.user = user
     }
 
     isInCompany() {
@@ -17,58 +10,60 @@ class User {
     }
 
     getDetails() {
-        return cookie.load('user').details;
+        return this.user;
     }
 
     getCompanyId() {
+        if (!this.getDetails().company) {
+            return null;
+        }
         return this.getDetails().company.uid;
     }
 
     static getTokenData() {
-        return atob(self.token.split('.')[1])
+        return atob(this.token.split('.')[1])
     }
 
 }
 
+
+const tokenNs = 'token'
+const userNs = 'user'
+
 export default class SessionManager {
 
     static get() {
-        if (SessionManager.exists()) {
-            let cookies = cookie.load('auth');
-            return new User(cookies.token)
-        }
+        let login = localStorage.getItem(tokenNs);
+        return login != null ? JSON.parse(login) : null;
     }
 
-    static save(response) {
-        return cookie.save('auth', {
-            'token': response.token,
-            'refreshToken': response.refreshToken
-        })
+    static getToken() {
+        return this.get() ? this.get().token : null
+    }
+
+    static save(data) {
+        localStorage.setItem(tokenNs, JSON.stringify(data))
+    }
+
+    static saveUserDetails(data) {
+        localStorage.setItem(userNs, JSON.stringify(data))
+    }
+
+    static getUserDetails() {
+        let user = localStorage.getItem(userNs);
+        return user != null ? new User(JSON.parse(user)) : null;
     }
 
     static remove() {
-        return cookie.remove('auth')
+        localStorage.removeItem(tokenNs);
     }
 
     static exists() {
-        return cookie.load('auth') !== undefined
+        return this.get() != null;
     }
 
     static isLogIn() {
-        return SessionManager.exists()
-    }
-
-    static refreshUserDetails() {
-        GetDetails({
-            onSuccess: function (json) {
-                console.log('refresh', json);
-                let user = SessionManager.get();
-                user.setDetails(json);
-            },
-            onError: function (json) {
-                // this.logout()
-            }
-        })
+        return this.exists();
     }
 
 }

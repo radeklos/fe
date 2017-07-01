@@ -2,7 +2,7 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-import {browserHistory} from "react-router";
+import {BrowserRouter, Route} from "react-router-dom";
 import {MenuItem, Modal, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
 
@@ -10,37 +10,40 @@ import LogInForm from "./forms/LogInForm.jsx";
 import SessionManager from "./services/Session.jsx";
 import {GetDetails} from "./api/Users.jsx";
 
+import {Join} from "./modules/Join.jsx";
+import {U} from "./modules/U.jsx";
+import {config} from "./config";
+
 
 class App extends React.Component {
 
-    constructor() {
-        super(...arguments);
+    constructor(props){
+        super(props);
+
         this.state = {
             show: false,
-            isLogIn: SessionManager.isLogIn(),
-            user: undefined,
-            appIsLoading: true,
+            isLogIn: SessionManager.isLogIn()
         };
+        console.log('config: ', config);
+        console.log('token: ', SessionManager.getToken());
+
+        this.logout = this.logout.bind(this);
+        this.onSuccessLogin = this.onSuccessLogin.bind(this);
+        this.getUserDetails = this.getUserDetails.bind(this);
     }
 
-    componentDidMount() {
-        if (this.state.isLogIn) {
+    componentWillMount() {
+        if (SessionManager.isLogIn()) {
             this.getUserDetails()
-        } else {
-            this.setState({appIsLoading: false});
         }
     }
 
     showModalLogIn() {
-        this.setState({
-            show: true
-        });
+        this.setState({show: true});
     }
 
     hideModalLogIn() {
-        this.setState({
-            show: false
-        });
+        this.setState({show: false});
     }
 
     onSuccessLogin() {
@@ -48,33 +51,27 @@ class App extends React.Component {
             isLogIn: SessionManager.isLogIn()
         }, this.hideModalLogIn());
         this.getUserDetails();
-        browserHistory.push('/');
     }
 
     logout() {
-        SessionManager.remove();
-        this.setState({
-            isLogIn: SessionManager.isLogIn(),
-            user: undefined
-        }, browserHistory.push('/'));
+        // SessionManager.remove();
+        // this.setState({
+        //     isLogIn: SessionManager.isLogIn(),
+        //     user: undefined,
+        //     redirectToHome: true
+        // });
     }
 
     getUserDetails() {
-        if (SessionManager.isLogIn()) {
-            GetDetails({
-                onSuccess: function (json) {
-                    let user = SessionManager.get();
-                    user.setDetails(json);
-                    this.setState({
-                        user: user,
-                        appIsLoading: false,
-                    })
-                }.bind(this),
-                onError: function (json) {
-                    // this.logout()
-                }
-            })
-        }
+        GetDetails({
+            onSuccess: (json) => {
+                SessionManager.saveUserDetails(json);
+                this.setState({isLogIn: true});
+            },
+            onError: (json) => {
+                this.logout()
+            }
+        })
     }
 
     render() {
@@ -96,9 +93,9 @@ class App extends React.Component {
         );
 
         const login = (
-            <Modal show={this.state.show} onHide={this.hideModalLogIn.bind(this)}>
+            <Modal show={this.state.show} onHide={ this.hideModalLogIn.bind(this) }>
                 <Modal.Body>
-                    <LogInForm onSuccessLogin={this.onSuccessLogin.bind(this)}/>
+                    <LogInForm onSuccessLogin={ this.onSuccessLogin.bind(this) }/>
                 </Modal.Body>
                 <Modal.Footer>
                     {"Don't have an account?"}
@@ -107,27 +104,31 @@ class App extends React.Component {
         );
 
         return (
-            <div>
-                <Navbar>
-                    <Navbar.Header>
-                        <Navbar.Brand>
-                            <a href="/">
-                                <img src={logo} className="app-logo" alt="logo"/> hld.
-                            </a>
-                        </Navbar.Brand>
-                        { this.state.isLogIn ? "" : <Navbar.Toggle /> }
-                    </Navbar.Header>
-                    <Navbar.Collapse>
-                        { this.state.isLogIn ? userMenu : guestMenu }
-                    </Navbar.Collapse>
-                </Navbar>
+            <BrowserRouter>
+                <div>
+                    <Navbar>
+                        <Navbar.Header>
+                            <Navbar.Brand>
+                                <a href="/">
+                                    <img src={logo} className="app-logo" alt="logo"/> hld.
+                                </a>
+                            </Navbar.Brand>
+                            { this.state.isLogIn ? "" : <Navbar.Toggle /> }
+                        </Navbar.Header>
+                        <Navbar.Collapse>
+                            { this.state.isLogIn ? userMenu : guestMenu }
+                        </Navbar.Collapse>
+                    </Navbar>
 
-                {login}
+                    <div className="container">
+                        <Route path="/" exact render={() => <U isLogIn={this.state.isLogIn} />} />
+                        <Route path="/join" component={Join} />
+                    </div>
 
-                <div className="container">
-                    { this.state.appIsLoading ? "" : React.cloneElement(this.props.children, this.state) }
+                    { login }
+
                 </div>
-            </div>
+            </BrowserRouter>
         );
     }
 }

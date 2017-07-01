@@ -5,17 +5,18 @@ import SessionManager from "../services/Session.jsx";
 import {PerformLogin} from "../api/Users.jsx";
 
 
-export default React.createClass({
+export default class LogInForm extends React.Component {
 
-    getInitialState: function () {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             isLoading: false,
             data: {},
             error: '',
         }
-    },
+    }
 
-    onSubmit: function (e) {
+    onSubmit(e) {
         PerformLogin({
             body: {
                 login: this.state.data.login,
@@ -35,17 +36,15 @@ export default React.createClass({
             }.bind(this)
         })
         e.preventDefault();
-    },
+    }
 
-    onChange: function (e) {
+    onChange(e) {
         var data = this.state.data
         data[e.target.name] = e.target.value
-        this.setState({
-            data: data,
-        })
-    },
+        this.setState({data: data})
+    }
 
-    alert: function (error) {
+    alert(error) {
         if (error) {
             return (
                 <Alert bsStyle="danger" onDismiss={this.handleAlertDismiss}>
@@ -54,11 +53,11 @@ export default React.createClass({
                 </Alert>
             )
         }
-    },
+    }
 
     render() {
         return (
-            <Form horizontal onSubmit={this.onSubmit} method="post" autoComplete="off">
+            <Form horizontal onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
                 {this.alert(this.state.error)}
 
                 <FormGroup controlId="formHorizontalEmail">
@@ -66,7 +65,7 @@ export default React.createClass({
                         Email
                     </Col>
                     <Col sm={10}>
-                        <FormControl type="email" name="login" placeholder="Email" onChange={ this.onChange }/>
+                        <FormControl type="email" name="login" placeholder="Email" onChange={ this.onChange.bind(this) }/>
                     </Col>
                 </FormGroup>
 
@@ -75,7 +74,7 @@ export default React.createClass({
                         Password
                     </Col>
                     <Col sm={10}>
-                        <FormControl type="password" name="password" placeholder="Password" onChange={ this.onChange }/>
+                        <FormControl type="password" name="password" placeholder="Password" onChange={ this.onChange.bind(this) }/>
                     </Col>
                 </FormGroup>
 
@@ -95,4 +94,4 @@ export default React.createClass({
             </Form>
         );
     }
-})
+}
