@@ -142,7 +142,6 @@ export class EmployeesTable extends React.Component {
 
     render() {
         let days = this.calculateDays(this.props.firstDay, this.props.lastDay);
-
         return (
             <Table responsive className="employees">
                 <thead>
@@ -160,8 +159,8 @@ export class EmployeesTable extends React.Component {
                                 <th className="person">
                                     <Media>
                                         <Media.Left>
-                                            <Badge>{ Math.floor(e.remaining) }{ this.toFraction(e.remaining) }</Badge>
-                                            <Gravatar email={ e.email } />
+                                            <Badge>{ Math.floor(person.remaining) }{ this.toFraction(person.remaining) }</Badge>
+                                            <Gravatar email={ person.email } />
                                         </Media.Left>
                                         <Media.Body>
                                             <Media.Heading>{ person.firstName } { person.lastName }</Media.Heading>
