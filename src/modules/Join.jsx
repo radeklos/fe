@@ -9,14 +9,13 @@ import {PerformRegistration} from "../api/Users.jsx";
 
 export class Join extends React.Component {
 
-    constructor(props) {
+    constructor (props) {
         super(props);
         this.state = {
             data: {},
             errors: {},
             isLoading: false
         };
-
         this.verifyPassword = this.verifyPassword.bind(this);
     }
 
@@ -124,6 +123,7 @@ export class Join extends React.Component {
         </div>)
     }
 }
+
 
 export class Finished extends React.Component {
     render() {

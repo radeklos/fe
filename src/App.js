@@ -6,7 +6,7 @@ import {BrowserRouter, Route} from "react-router-dom";
 import {MenuItem, Modal, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
 
-import LogInForm from "./forms/LogInForm.jsx";
+import {LogInForm} from "./forms/LogInForm.jsx";
 import SessionManager from "./services/Session.jsx";
 import {GetDetails} from "./api/Users.jsx";
 
@@ -98,7 +98,7 @@ class App extends React.Component {
                     <LogInForm onSuccessLogin={ this.onSuccessLogin.bind(this) }/>
                 </Modal.Body>
                 <Modal.Footer>
-                    {"Don't have an account?"}
+                    {"Don't you have an account?"}
                 </Modal.Footer>
             </Modal>
         );

@@ -5,7 +5,7 @@ import SessionManager from "../services/Session.jsx";
 import {PerformLogin} from "../api/Users.jsx";
 
 
-export default class LogInForm extends React.Component {
+export class LogInForm extends React.Component {
 
     constructor(props) {
         super(props);
@@ -94,4 +94,5 @@ export default class LogInForm extends React.Component {
             </Form>
         );
     }
+
 }
