@@ -11,11 +11,13 @@ describe('<EmployeesTable />', function() {
 
     it('employee has filled details', () => {
         const emp = {
-            email: 'example@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-            department: 'Missing',
-            remaining: 20,
+            employee: {
+                email: 'example@example.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                department: 'Missing',
+                remaining: 20
+            }
         }
         const wrapper = shallow(<EmployeesTable
                                     employees={[emp]}
@@ -31,18 +33,22 @@ describe('<EmployeesTable />', function() {
 
     it('table contains all employees', () => {
         const emp1 = {
-            email: 'example1@example.com',
-            firstName: 'John1',
-            lastName: 'Doe2',
-            department: 'Missing',
-            remaining: 20,
+            employee: {
+                email: 'example1@example.com',
+                firstName: 'John1',
+                lastName: 'Doe2',
+                department: 'Missing',
+                remaining: 20
+            }
         }
         const emp2 = {
-            email: 'example2@example.com',
-            firstName: 'John2',
-            lastName: 'Doe1',
-            department: 'Missing',
-            remaining: 20,
+            employee: {
+                email: 'example2@example.com',
+                firstName: 'John2',
+                lastName: 'Doe1',
+                department: 'Missing',
+                remaining: 20
+            }
         }
         const wrapper = shallow(<EmployeesTable
                                     employees={[emp1, emp2]}
@@ -54,11 +60,13 @@ describe('<EmployeesTable />', function() {
 
     it('format remaining float is transformed into fraction', () => {
         const emp = {
-            email: 'example@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-            department: 'Missing',
-            remaining: 20.5,
+            employee: {
+                email: 'example@example.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                department: 'Missing',
+                remaining: 20.5
+            }
         }
         const wrapper = shallow(<EmployeesTable
                                     employees={[emp]}
@@ -70,11 +78,13 @@ describe('<EmployeesTable />', function() {
 
     it('format remaining decimal', () => {
         const emp = {
-            email: 'example@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-            department: 'Missing',
-            remaining: 20,
+            employee: {
+                email: 'example@example.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                department: 'Missing',
+                remaining: 20
+            }
         }
         const wrapper = shallow(<EmployeesTable
                                     employees={[emp]}
