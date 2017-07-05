@@ -85,6 +85,7 @@ table.employees table td div.content {
     left: 0;
     right: 0;
     padding-top: 6px;
+    z-index: 99;
 }
 
 table.employees table td div {
@@ -96,6 +97,16 @@ table.employees table td div {
     cursor: pointer;
     user-select: none;
 }
+
+
+table.employees table td div.first.time-off {
+    background-color: red;
+}
+
+table.employees table td div.second.time-off {
+    background-color: red;
+}
+
 
 table.employees table td div.first {
     width: 50%;

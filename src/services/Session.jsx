@@ -9,6 +9,10 @@ class User {
         return !!('company' in this.getDetails() && this.getDetails().company);
     }
 
+    getId() {
+        return this.user.uid;
+    }
+
     getDetails() {
         return this.user;
     }

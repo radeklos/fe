@@ -70,7 +70,7 @@ class CompanyForm extends React.Component {
 
     render() {
         return (
-            <Form horizontal onSubmit={this.onSubmit.bind(this)} method="post" autoComplete="off">
+            <Form horizontal onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-5">
@@ -127,7 +127,6 @@ class CompanyForm extends React.Component {
                                 error={ this.state.errors.postcode }>Postcode</SimpleFormField>
                         </div>
                     </div>
-
                     <div className="row">
                         <hr />
                         <div className="col-md-5">
@@ -138,13 +137,11 @@ class CompanyForm extends React.Component {
                                 onChange={ this.onChange.bind(this) }
                                 error={ this.state.errors.defaultDaysOff }>The holiday entitlement for the full year</SimpleFormField>
                         </div>
-
                         <div className="row">
                             <div className="col-md-12">
                                 <FormButton isLoading={ this.state.isLoading } bsStyle="success">Create</FormButton>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </Form>
