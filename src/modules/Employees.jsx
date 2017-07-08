@@ -76,9 +76,8 @@ export class Employees extends React.Component {
     }
 
     changeMonth(step) {
-        let firstDay = new Date(this.state.firstDay.getFullYear(), this.state.firstDay.getMonth() + step, 1);
-        let lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0);
-
+        const firstDay = new Date(this.state.firstDay.getFullYear(), this.state.firstDay.getMonth() + step, 1);
+        const lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0);
         this.setState({
             firstDay: firstDay,
             lastDay: lastDay
@@ -228,7 +227,8 @@ class DaysHeader extends React.Component {
 
 export class Days extends React.Component {
 
-    isOffStarting(date, timeoff) {
+    isOffStarting(_date, timeoff) {
+        const date = new Date(_date);
         date.setUTCHours(0, 0, 0, 0);
         const starting = new Date(timeoff.starting);
         starting.setUTCHours(0, 0, 0, 0);
@@ -241,7 +241,8 @@ export class Days extends React.Component {
         return starting <= date && date <= ending;
     }
 
-    isOffEnding(date, timeoff) {
+    isOffEnding(_date, timeoff) {
+        const date = new Date(_date);
         date.setUTCHours(0, 0, 0, 0);
         const starting = new Date(timeoff.starting);
         starting.setUTCHours(0, 0, 0, 0);
@@ -256,7 +257,6 @@ export class Days extends React.Component {
 
     render() {
         const {days, leaves} = this.props;
-
         return (
             <Table>
                 <tbody>
