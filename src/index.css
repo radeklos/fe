@@ -100,13 +100,12 @@ table.employees table td div {
 
 
 table.employees table td div.first.time-off {
-    background-color: red;
+    background: rgba(51, 204, 51, 0.5);
 }
 
 table.employees table td div.second.time-off {
-    background-color: red;
+    background: rgba(51, 204, 51, 0.5);
 }
-
 
 table.employees table td div.first {
     width: 50%;
@@ -122,8 +121,17 @@ table.employees table td div.second {
     font-size: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 568px) {
     div.requestTimeOffModal > div.modal-dialog {
         width: 660px;
     }
+}
+
+div.toast {
+    width: 200px;
+    position: absolute;
+    margin: 0;
+    right: 10px;
+    top: 75px;
+    z-index: 99;
 }

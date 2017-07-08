@@ -1,12 +1,13 @@
 import React from "react";
 
-import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col, Modal, Form, FormGroup, ControlLabel, FormControl, InputGroup, DropdownButton, Panel} from "react-bootstrap";
+import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col, Modal, Form, FormGroup, ControlLabel, FormControl, InputGroup, DropdownButton} from "react-bootstrap";
+
 
 import SessionManager from "./../services/Session.jsx";
 import {GetDepartment} from '../api/Companies'
 import {GetDepartmentEmployees} from '../api/Employees'
 import {Gravatar} from '../components/Gravatar'
-import {FieldGroup} from "../forms/FormField.jsx";
+import {Toast} from '../components/Toast'
 import FormButton from "../forms/FormButton.jsx";
 import {GetLeaves, CreateLeave} from "../api/Leaves";
 
@@ -38,11 +39,16 @@ export class Employees extends React.Component {
             employees: [],
             firstDay: firstDay,
             lastDay: lastDay,
+            show: false
         };
     }
 
     componentDidMount() {
         GetDepartment({onSuccess: this.pupulateListOfDepartments.bind(this)});
+        this.getLeaves();
+    }
+
+    getLeaves() {
         GetLeaves({onSuccess: this.pupulateListOfEmployees.bind(this)}, formatDate(this.state.firstDay), formatDate(this.state.lastDay));
     }
 
@@ -89,8 +95,14 @@ export class Employees extends React.Component {
 
         return (
             <div>
-                { this.state.showBookTimeOffModal && <BookTimeOffModal close={() => this.setState({showBookTimeOffModal: false})} /> }
-                <Button bsStyle="primary" className="pull-right" onClick={() => this.setState({showBookTimeOffModal: true})}>Book time off</Button>
+                <BookTimeOffModal
+                    show={this.state.showBookTimeOffModal}
+                    close={() => this.setState({showBookTimeOffModal: false})}
+                    onSuccess={() => this.getLeaves() } />
+
+                <Button bsStyle="primary"
+                    className="pull-right"
+                    onClick={() => this.setState({showBookTimeOffModal: true})}>Book time off</Button>
 
                 <h1>Your company</h1>
                 <Row className="employeeHeader">
@@ -307,6 +319,10 @@ class BookTimeOffModal extends React.Component {
                 starting: formatDate(new Date()),
                 ending: undefined
             },
+            toast: {
+                style: undefined,
+                text: undefined,
+            },
             now: new Date()
         }
         this.ampmChange = this.ampmChange.bind(this);
@@ -332,9 +348,21 @@ class BookTimeOffModal extends React.Component {
         this.setState({isLoading: true});
         CreateLeave({
             onSuccess: () => {
-                this.setState({isLoading: false});
+                this.setState({
+                    isLoading: false,
+                    show: false,
+                    toast: {
+                        text: "Booked!",
+                        style: "success"
+                    }
+                }, () => {
+                    this.props.onSuccess();
+                    this.props.close();
+                    this.showToast();
+                })
             },
             onError: () => {
+                // TODO unhandlered error
                 this.setState({isLoading: false});
             }
         }, {
@@ -348,92 +376,92 @@ class BookTimeOffModal extends React.Component {
         e.preventDefault();
     }
 
+    showToast() {
+        this.setState({showToast: true});
+        setTimeout(() => {
+            this.setState({showToast: false})
+        }, 8000);
+    }
+
     render() {
-        const {formData, isLoading} = this.state;
+        const {formData, isLoading, toast} = this.state;
 
         return (
-            <Modal show={true} onHide={this.props.close} className="requestTimeOffModal">
-                <Form onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
-                    <Modal.Header closeButton>
-                        <Modal.Title>Request time off</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Panel header={'title'} bsStyle="success" />
+            <div>
+                <Toast text={toast.text} show={this.state.showToast} style={toast.style} />
+                <Modal show={this.props.show} onHide={this.props.close} className="requestTimeOffModal">
+                    <Form onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
+                        <Modal.Header closeButton>
+                            <Modal.Title>Request time off</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Row>
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <ControlLabel>Starting</ControlLabel>
+                                        <InputGroup>
+                                            <FormControl
+                                                type="date"
+                                                name="starting"
+                                                value={ formData.starting }
+                                                onChange={ this.onChange.bind(this) }
+                                                disabled={ isLoading }
+                                                required />
+                                            <DropdownButton
+                                              componentClass={InputGroup.Button}
+                                              id="input-dropdown-addon"
+                                              disabled={ isLoading }
+                                              title={ BookTimeOffModal.amPm.starting[formData.startingAt] }
+                                            >
+                                                <MenuItem eventKey="am" onSelect={ this.ampmChange.bind(this, 'startingAt') }>Morning</MenuItem>
+                                                <MenuItem eventKey="pm" onSelect={ this.ampmChange.bind(this, 'startingAt') }>Afternoon</MenuItem>
+                                            </DropdownButton>
+                                      </InputGroup>
+                                    </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <ControlLabel>Ending</ControlLabel>
+                                        <InputGroup>
+                                            <FormControl
+                                                type="date"
+                                                name="ending"
+                                                value={ formData.ending }
+                                                onChange={ this.onChange.bind(this) }
+                                                disabled={ isLoading }
+                                                min={ formData.starting }
+                                                required />
+                                            <DropdownButton
+                                              componentClass={InputGroup.Button}
+                                              id="input-dropdown-addon"
+                                              disabled={ isLoading }
+                                              title={ BookTimeOffModal.amPm.ending[formData.endingAt] }
+                                            >
+                                                <MenuItem eventKey="pm" onSelect={ this.ampmChange.bind(this, 'endingAt') }>Lunchtime</MenuItem>
+                                                <MenuItem eventKey="am" onSelect={ this.ampmChange.bind(this, 'endingAt') }>End of Day</MenuItem>
+                                            </DropdownButton>
+                                        </InputGroup>
+                                    </FormGroup>
+                                </Col>
+                            </Row>
 
-                        <FieldGroup
-                            id="formControlsText"
-                            type="text"
-                            label="Type"
-                            placeholder="Type"
-                            disabled={ isLoading }
-                            onChange={ this.onChange.bind(this) }
-                        />
-                        <Row>
-                            <Col md={6}>
-                                <FormGroup>
-                                    <ControlLabel>Starting</ControlLabel>
-                                    <InputGroup>
-                                        <FormControl
-                                            type="date"
-                                            name="starting"
-                                            value={ formData.starting }
-                                            onChange={ this.onChange.bind(this) }
-                                            disabled={ isLoading }
-                                            required />
-                                        <DropdownButton
-                                          componentClass={InputGroup.Button}
-                                          id="input-dropdown-addon"
-                                          disabled={ isLoading }
-                                          title={ BookTimeOffModal.amPm.starting[formData.startingAt] }
-                                        >
-                                            <MenuItem eventKey="am" onSelect={ this.ampmChange.bind(this, 'startingAt') }>Morning</MenuItem>
-                                            <MenuItem eventKey="pm" onSelect={ this.ampmChange.bind(this, 'startingAt') }>Afternoon</MenuItem>
-                                        </DropdownButton>
-                                  </InputGroup>
-                                </FormGroup>
-                            </Col>
-                            <Col md={6}>
-                                <FormGroup>
-                                    <ControlLabel>Ending</ControlLabel>
-                                    <InputGroup>
-                                        <FormControl
-                                            type="date"
-                                            name="ending"
-                                            value={ formData.ending }
-                                            onChange={ this.onChange.bind(this) }
-                                            disabled={ isLoading }
-                                            min={ formData.starting }
-                                            required />
-                                        <DropdownButton
-                                          componentClass={InputGroup.Button}
-                                          id="input-dropdown-addon"
-                                          disabled={ isLoading }
-                                          title={ BookTimeOffModal.amPm.ending[formData.endingAt] }
-                                        >
-                                            <MenuItem eventKey="pm" onSelect={ this.ampmChange.bind(this, 'endingAt') }>Lunchtime</MenuItem>
-                                            <MenuItem eventKey="am" onSelect={ this.ampmChange.bind(this, 'endingAt') }>End of Day</MenuItem>
-                                        </DropdownButton>
-                                    </InputGroup>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-
-                        <FormGroup controlId="formControlsTextarea">
-                            <ControlLabel>Reason</ControlLabel>
-                            <FormControl
-                                componentClass="textarea"
-                                placeholder="Reason for time off"
-                                name="reason"
-                                onChange={ this.onChange.bind(this) }
-                                disabled={ isLoading } />
-                        </FormGroup>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={this.props.close} disabled={ isLoading } >Close</Button>
-                        <FormButton isLoading={ isLoading } bsStyle="success">Send request</FormButton>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
+                            <FormGroup controlId="formControlsTextarea">
+                                <ControlLabel>Reason</ControlLabel>
+                                <FormControl
+                                    componentClass="textarea"
+                                    placeholder="Reason for time off"
+                                    name="reason"
+                                    onChange={ this.onChange.bind(this) }
+                                    disabled={ isLoading } />
+                            </FormGroup>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button onClick={this.props.close} disabled={ isLoading } >Close</Button>
+                            <FormButton isLoading={ isLoading } bsStyle="success">Send request</FormButton>
+                        </Modal.Footer>
+                    </Form>
+                </Modal>
+            </div>
         );
     }
 }

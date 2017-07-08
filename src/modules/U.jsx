@@ -4,7 +4,7 @@ import {Button, Jumbotron} from "react-bootstrap";
 
 import CompanyForm from "../forms/CompanyForm.jsx";
 import {ImportEmployeesModal} from "./ImportEmployees";
-import {Employees} from "./Employees"
+import {Employees} from "./Employees";
 
 
 export class U extends React.Component {
