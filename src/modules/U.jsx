@@ -1,21 +1,29 @@
 import React from "react";
 
 import {Button, Jumbotron} from "react-bootstrap";
+import {Route} from "react-router-dom";
 
+import SessionManager from "../services/Session.jsx";
 import CompanyForm from "../forms/CompanyForm.jsx";
 import {ImportEmployeesModal} from "./ImportEmployees";
 import {Employees} from "./Employees";
+import {Settings} from "./Settings";
 
 
 export class U extends React.Component {
-
     render() {
-        if(this.props.isLogIn) {
-            return (
-                <div>
-                    <Employees />
-                </div>
-            );
+        if(SessionManager.isLogIn()) {
+            const companyId = SessionManager.getUserDetails().getCompanyId();
+            if (!!companyId) {
+                return (
+                    <div>
+                        <Route path="/" exact component={Employees} />
+                        <Route path="/settings" component={Settings} />
+                    </div>
+                );
+            } else {
+                return (<CreateCompany />);
+            }
         } else {
             return (
                 <div>

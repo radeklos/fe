@@ -8,18 +8,18 @@ export function fetchHandler(f, actionObject) {
             throw error
         }
     })
-    .then(function (response) {
-        return response.json()
-    })
-    .then(function (json) {
+    .then((resp) => resp.json())
+    .then((json) => {
         if (actionObject.hasOwnProperty('onSuccess')) {
             actionObject.onSuccess(json);
         }
     })
-    .catch(function (error) {
-        console.error('fetchHandler', error);
-        if (actionObject.hasOwnProperty('onError')) {
-            actionObject.onError(error);
-        }
+    .catch((error) => {
+        console.log(error)
+        return error.response.json().then((json) => {
+            if (actionObject.hasOwnProperty('onError')) {
+                actionObject.onError(json)
+            }
+        });
     })
 }

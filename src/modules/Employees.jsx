@@ -1,7 +1,8 @@
 import React from "react";
 
-import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col, Modal, Form, FormGroup, ControlLabel, FormControl, InputGroup, DropdownButton} from "react-bootstrap";
+import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col, Modal, Form, FormGroup, ControlLabel, FormControl, InputGroup, DropdownButton, Image} from "react-bootstrap";
 
+import plus from "../images/plus.svg";
 
 import SessionManager from "./../services/Session.jsx";
 import {GetDepartment} from '../api/Companies'
@@ -192,6 +193,16 @@ export class EmployeesTable extends React.Component {
                             </tr>
                         )
                     })}
+                    <tr key="new">
+                        <td>
+                            <Media>
+                                <Media.Left>
+                                    <AddNewEmployee />
+                                </Media.Left>
+                            </Media>
+                        </td>
+                        <td style={{padding: 0}}></td>
+                    </tr>
                 </tbody>
             </Table>
         )
@@ -292,6 +303,105 @@ export class Days extends React.Component {
                 </tbody>
             </Table>
         )
+    }
+}
+
+class AddNewEmployee extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false,
+            toast: {
+                style: undefined,
+                text: undefined,
+            },
+            data: {},
+            errors: {},
+            show: false,
+        }
+    }
+
+    onChange(e) {
+        let formData = this.state.formData;
+        let value = e.target.value;
+        if (value instanceof Date) {
+            value = formatDate(value);
+        }
+        formData[e.target.name] = e.target.value;
+        this.setState({formData: formData});
+    }
+
+    onSubmit(e) {
+
+    }
+
+    render() {
+        const {isLoading, toast} = this.state;
+
+        return (
+            <div>
+                <Toast text={toast.text} show={this.state.showToast} style={toast.style} />
+                <Modal show={this.state.show} onHide={() => this.setState({show: false})} className="requestTimeOffModal">
+                    <Form horizontal onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
+                        <Modal.Header closeButton>
+                            <Modal.Title>Invite new user</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Row>
+                                <Col md={6}>
+                                    <ControlLabel>Firstname</ControlLabel>
+                                    <FormControl
+                                        type="text"
+                                        name="firstname"
+                                        onChange={ this.onChange.bind(this) }
+                                        disabled={ isLoading }
+                                        required />
+                                </Col>
+                                <Col md={6}>
+                                    <ControlLabel>Lastname</ControlLabel>
+                                    <FormControl
+                                        type="text"
+                                        name="lastname"
+                                        onChange={ this.onChange.bind(this) }
+                                        disabled={ isLoading }
+                                        required />
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col md={12}>
+                                    <ControlLabel>Email</ControlLabel>
+                                    <FormControl
+                                        type="text"
+                                        name="email"
+                                        onChange={ this.onChange.bind(this) }
+                                        disabled={ isLoading }
+                                        required />
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col md={12}>
+                                    <ControlLabel>Department</ControlLabel>
+                                    <FormControl componentClass="select">
+                                        <option value="select">select (multiple)</option>
+                                        <option value="other">...</option>
+                                    </FormControl>
+                                </Col>
+                            </Row>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button onClick={() => this.setState({show: false})} disabled={ isLoading } >Close</Button>
+                            <FormButton isLoading={ isLoading } bsStyle="success">Send invitation</FormButton>
+                        </Modal.Footer>
+                    </Form>
+                </Modal>
+
+                <a href="#" onClick={() => this.setState({show: true})}>
+                    <Image src={plus} circle width="25" height="25" />{" "}
+                    New user
+                </a>
+            </div>
+        );
     }
 }
 

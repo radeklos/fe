@@ -54,12 +54,11 @@ class App extends React.Component {
     }
 
     logout() {
-        // SessionManager.remove();
-        // this.setState({
-        //     isLogIn: SessionManager.isLogIn(),
-        //     user: undefined,
-        //     redirectToHome: true
-        // });
+        SessionManager.remove();
+        this.setState({
+            user: undefined,
+            redirectToHome: true
+        });
     }
 
     getUserDetails() {
@@ -75,6 +74,8 @@ class App extends React.Component {
     }
 
     render() {
+        const isLogIn = SessionManager.isLogIn();
+
         const guestMenu = (
             <Nav pullRight>
                 <LinkContainer to="/join"><NavItem>Sign up</NavItem></LinkContainer>
@@ -85,7 +86,7 @@ class App extends React.Component {
         const userMenu = (
             <Nav pullRight>
                 <NavDropdown noCaret className="user-menu" title="" id="basic-nav-dropdown">
-                    <MenuItem>Settings</MenuItem>
+                    <LinkContainer to='/settings'><MenuItem>Settings</MenuItem></LinkContainer>
                     <MenuItem divider />
                     <MenuItem onClick={this.logout.bind(this)}>Log out</MenuItem>
                 </NavDropdown>
@@ -113,15 +114,15 @@ class App extends React.Component {
                                     <img src={logo} className="app-logo" alt="logo"/> hld.
                                 </a>
                             </Navbar.Brand>
-                            { this.state.isLogIn ? "" : <Navbar.Toggle /> }
+                            { isLogIn ? "" : <Navbar.Toggle /> }
                         </Navbar.Header>
                         <Navbar.Collapse>
-                            { this.state.isLogIn ? userMenu : guestMenu }
+                            { isLogIn ? userMenu : guestMenu }
                         </Navbar.Collapse>
                     </Navbar>
 
                     <div className="container">
-                        <Route path="/" exact render={() => <U isLogIn={this.state.isLogIn} />} />
+                        <Route path="/" render={() => <U />} />
                         <Route path="/join" component={Join} />
                     </div>
 
