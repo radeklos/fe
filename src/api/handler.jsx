@@ -1,5 +1,6 @@
 export function fetchHandler(f, actionObject) {
-    f.then(function (response) {
+    f
+    .then((response) => {
         if (response.status >= 200 && response.status < 300) {
             return Promise.resolve(response)
         } else {

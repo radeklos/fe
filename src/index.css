@@ -125,7 +125,7 @@ table.employees table td div.second {
 
 div.toast {
     width: 200px;
-    position: absolute;
+    position: fixed;
     margin: 0;
     right: 10px;
     top: 75px;

@@ -41,3 +41,33 @@ export function GetDepartment(actionObject) {
         body: JSON.stringify(actionObject.body)
     }), actionObject);
 }
+
+
+export function GetCompanyEmployees(actionObject) {
+    let user = SessionManager.getUserDetails();
+    fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId() + '/employees', {
+        method: 'GET',
+        headers: {
+            'X-Authorization': "Bearer " + SessionManager.get().token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(actionObject.body)
+    }), actionObject);
+}
+
+
+export function CreateDepartment(actionObject) {
+    console.log(JSON.stringify(actionObject.body));
+
+    let user = SessionManager.getUserDetails();
+    fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId() + '/departments', {
+        method: 'POST',
+        headers: {
+            'X-Authorization': "Bearer " + SessionManager.get().token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(actionObject.body)
+    }), actionObject);
+}

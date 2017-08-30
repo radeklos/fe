@@ -2,7 +2,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import {expect} from 'chai';
 
-import {DepartmentTable} from './Settings';
+import {DepartmentTable, Department, AddNewDepartment} from './Settings';
 
 
 describe('<DepartmentTable />', function() {
@@ -18,3 +18,20 @@ describe('<DepartmentTable />', function() {
 
 });
 
+
+describe('<AddNewDepartment />', function() {
+
+    it('has button with label add new', () => {
+        const wrapper = shallow(<AddNewDepartment employees={[]} />);
+
+        expect(wrapper.find('.pull-right').render().text()).to.contains('Add new');
+    });
+
+    it('when add new button is clicked modal is present', () => {
+        const wrapper = shallow(<AddNewDepartment employees={[]} />);
+
+        wrapper.find('.pull-right').simulate('click');
+        expect(wrapper.state('show')).to.equals(true);
+    });
+
+});
