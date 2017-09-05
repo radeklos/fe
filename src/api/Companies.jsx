@@ -58,8 +58,6 @@ export function GetCompanyEmployees(actionObject) {
 
 
 export function CreateDepartment(actionObject) {
-    console.log(JSON.stringify(actionObject.body));
-
     let user = SessionManager.getUserDetails();
     fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId() + '/departments', {
         method: 'POST',

@@ -18,7 +18,6 @@ describe('<DepartmentTable />', function() {
 
 });
 
-
 describe('<AddNewDepartment />', function() {
 
     it('has button with label add new', () => {

@@ -40,7 +40,7 @@ export class Department extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchDepartments();
+        this.fetchEmployees();
     }
 
     populateEmployees(response) {
@@ -49,7 +49,7 @@ export class Department extends React.Component {
         }
     }
 
-    fetchDepartments() {
+    fetchEmployees() {
         GetCompanyEmployees({onSuccess: this.populateEmployees.bind(this)});
     }
 
@@ -94,7 +94,6 @@ export class AddNewDepartment extends React.Component {
     onChange(e) {
         let formData = this.state.formData;
         formData[e.target.name] = e.target.value;
-        console.log('formData', formData);
         this.setState({formData: formData});
     }
 

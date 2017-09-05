@@ -4,9 +4,6 @@ import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col, Mod
 
 import plus from "../images/plus.svg";
 
-import SessionManager from "./../services/Session.jsx";
-import {GetDepartment} from '../api/Companies'
-import {GetDepartmentEmployees} from '../api/Employees'
 import {Gravatar} from '../components/Gravatar'
 import {Toast} from '../components/Toast'
 import FormButton from "../forms/FormButton.jsx";
@@ -33,9 +30,10 @@ export class Employees extends React.Component {
         let lastDay = new Date();
         lastDay.setDate(lastDay.getDate() + 30)
 
+        this.departmentItemAll = {uid: null, label: 'All departments'};
         this.state = {
             showBookTimeOffModal: false,
-            selectedDepartment: null,
+            selectedDepartment: this.departmentItemAll,
             departments: [],
             employees: [],
             firstDay: firstDay,
@@ -45,7 +43,6 @@ export class Employees extends React.Component {
     }
 
     componentDidMount() {
-        GetDepartment({onSuccess: this.pupulateListOfDepartments.bind(this)});
         this.getLeaves();
     }
 
@@ -54,26 +51,18 @@ export class Employees extends React.Component {
     }
 
     pupulateListOfEmployees(response) {
-        this.setState({employees: response.items});
-    }
-
-    pupulateListOfDepartments(response) {
-        let departments = response.map(d => {
-            return {name: d.name, uid: d.uid}
+        this.setState({
+            employees: response.items,
+            departments: [this.departmentItemAll, ...response.items.map(e => {
+                return {label: e.department.label, uid: e.department.uid}
+            })].filter((item, index, inputArray) => {  // make it unique
+                return inputArray.indexOf(item) == index;
+            })
         });
-        if (departments.length > 0) {
-            this.setState({departments: departments}, this.departmentChange(departments[0]));
-        }
-    }
-
-    loadEmployees(departmentId) {
-        let user = SessionManager.get();
-        GetDepartmentEmployees(user.getCompanyId(), departmentId, {onSuccess: this.pupulateListOfEmployees.bind(this)});
     }
 
     departmentChange(d) {
         this.setState({selectedDepartment: d});
-        this.loadEmployees(d.uid);
     }
 
     changeMonth(step) {
@@ -87,6 +76,11 @@ export class Employees extends React.Component {
 
     localizeMonth(date) {
         return date.toLocaleString("en-us", {month: "long"});
+    }
+
+    filterEmployoeesOnlyInDepartment(e) {
+        return (this.state.selectedDepartment.uid == null) ||
+            (e.department && e.department.uid === this.state.selectedDepartment.uid);
     }
 
     render() {
@@ -108,13 +102,13 @@ export class Employees extends React.Component {
                 <Row className="employeeHeader">
                     <Col md={2}>
                         { this.state.selectedDepartment ?
-                            <SplitButton title={this.state.selectedDepartment.name} id="departments">
+                            <SplitButton title={this.state.selectedDepartment.label} id="departments">
                                { this.state.departments.map((d, i) => {
                                     return (<MenuItem
                                         key={d.uid}
                                         eventKey={d.uid}
                                         onSelect={this.departmentChange.bind(this, d)}
-                                    >{d.name}</MenuItem>)
+                                    >{d.label}</MenuItem>)
                                 })}
                             </SplitButton>
                             : null
@@ -139,9 +133,11 @@ export class Employees extends React.Component {
                 </Row>
 
                 <EmployeesTable
-                    employees={this.state.employees}
+                    employees={this.state.employees.filter(this.filterEmployoeesOnlyInDepartment.bind(this))}
                     firstDay={this.state.firstDay}
                     lastDay={this.state.lastDay} />
+
+                <AddNewEmployee departments={this.state.departments} />
             </div>
         )
     }
@@ -156,7 +152,7 @@ export class EmployeesTable extends React.Component {
         }
         const rounded = Math.floor(num);
         if (rounded !== num) {
-            return (<Badge>{rounded}<small>&#189;</small></Badge>);  // 1/2
+            return (<Badge>{rounded === 0 ? "" : rounded} <small>&#189;</small></Badge>);  // 1/2
         }
         return (<Badge>{rounded}</Badge>);
     }
@@ -176,16 +172,16 @@ export class EmployeesTable extends React.Component {
                     { this.props.employees.map((e, i) => {
                         const person = e.employee;
                         return (
-                            <tr key={"emp" + i}>
+                            <tr key={'emp' + i}>
                                 <th className="person">
                                     <Media>
                                         <Media.Left>
-                                            { this.parseBadge(person.remaining) }
+                                            { this.parseBadge(e.remaining) }
                                             <Gravatar email={ person.email } />
                                         </Media.Left>
                                         <Media.Body>
                                             <Media.Heading>{ person.firstName } { person.lastName }</Media.Heading>
-                                            <p>{ person.department }</p>
+                                            <p>{ e.department && e.department.label }</p>
                                         </Media.Body>
                                     </Media>
                                 </th>
@@ -193,16 +189,6 @@ export class EmployeesTable extends React.Component {
                             </tr>
                         )
                     })}
-                    <tr key="new">
-                        <td>
-                            <Media>
-                                <Media.Left>
-                                    <AddNewEmployee />
-                                </Media.Left>
-                            </Media>
-                        </td>
-                        <td style={{padding: 0}}></td>
-                    </tr>
                 </tbody>
             </Table>
         )
@@ -319,15 +305,17 @@ class AddNewEmployee extends React.Component {
             data: {},
             errors: {},
             show: false,
+            formData: {
+                firstname: undefined,
+                lastname: undefined,
+                email: undefined,
+                department: undefined
+            }
         }
     }
 
     onChange(e) {
         let formData = this.state.formData;
-        let value = e.target.value;
-        if (value instanceof Date) {
-            value = formatDate(value);
-        }
         formData[e.target.name] = e.target.value;
         this.setState({formData: formData});
     }
@@ -382,10 +370,21 @@ class AddNewEmployee extends React.Component {
                             <Row>
                                 <Col md={12}>
                                     <ControlLabel>Department</ControlLabel>
-                                    <FormControl componentClass="select">
-                                        <option value="select">select (multiple)</option>
-                                        <option value="other">...</option>
-                                    </FormControl>
+                                        <FormControl
+                                            name="department"
+                                            componentClass="select"
+                                            placeholder="select"
+                                            onChange={ this.onChange.bind(this) }
+                                            disabled={ isLoading }
+                                            required>
+                                                <option value=""></option>
+                                            { this.props.departments.map((d, i) => {
+                                                return (<option
+                                                    key={d.uid}
+                                                    value={d.uid}
+                                                >{ d.name }</option>)
+                                            })}
+                                        </FormControl>
                                 </Col>
                             </Row>
                         </Modal.Body>
