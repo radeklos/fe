@@ -35,12 +35,14 @@ export class Department extends React.Component {
         this.state = {
             show: true,
             isLoading: false,
-            employees: []
+            employees: [],
+            departments: []
         };
     }
 
     componentDidMount() {
         this.fetchEmployees();
+        this.fetchDepartments();
     }
 
     populateEmployees(response) {
@@ -53,6 +55,16 @@ export class Department extends React.Component {
         GetCompanyEmployees({onSuccess: this.populateEmployees.bind(this)});
     }
 
+    fetchDepartments() {
+        GetDepartment({onSuccess: this.pupulateListOfDepartments.bind(this)});
+    }
+
+    pupulateListOfDepartments(response) {
+        if(response.total >= 1) {
+            this.setState({departments: response.items})
+        }
+    }
+
     render() {
         return (
             <div>
@@ -60,11 +72,11 @@ export class Department extends React.Component {
                 <Row>
                     <Col md={12}>
                         <AddNewDepartment
-                            onSuccess={() => this.fetchDepartments()}
+                            onSuccess={ () => this.fetchDepartments() }
                             employees={ this.state.employees } />
                     </Col>
                 </Row>
-                <DepartmentTable />
+                <DepartmentTable departments={ this.state.departments } />
             </div>
         )
     }
@@ -224,25 +236,8 @@ export class Settings extends React.Component {
 
 export class DepartmentTable extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            departments: [],
-        };
-    }
-
-    componentDidMount() {
-        GetDepartment({onSuccess: this.pupulateListOfDepartments.bind(this)});
-    }
-
-    pupulateListOfDepartments(response) {
-        if(response.total >= 1) {
-            this.setState({departments: response.items})
-        }
-    }
-
     render() {
-        const {departments} = this.state;
+        const {departments} = this.props;
         return (
             <Table responsive>
                 <thead>

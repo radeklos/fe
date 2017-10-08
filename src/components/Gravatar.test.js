@@ -3,6 +3,7 @@ import {shallow} from 'enzyme';
 import {expect} from 'chai';
 
 import {Gravatar} from './Gravatar';
+import Setup from './../setup';
 
 
 describe('<Gravatar />', function() {

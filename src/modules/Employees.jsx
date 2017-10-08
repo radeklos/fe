@@ -8,6 +8,8 @@ import {Gravatar} from '../components/Gravatar'
 import {Toast} from '../components/Toast'
 import FormButton from "../forms/FormButton.jsx";
 import {GetLeaves, CreateLeave} from "../api/Leaves";
+import {GetDepartment} from '../api/Companies'
+import {CreateNewEmployee} from '../api/Employees'
 
 
 const formatDate = (date) => date.toISOString().slice(0, 10);
@@ -51,13 +53,19 @@ export class Employees extends React.Component {
     }
 
     pupulateListOfEmployees(response) {
+        const unique = [];
+        const department = [this.departmentItemAll, ...response.items.map(e => {
+            return {label: e.department.label, uid: e.department.uid}
+        })].filter((item, index, inputArray) => {  // make it unique
+            if (unique.indexOf(item.uid) !== -1) {
+                return false;
+            }
+            unique.push(item.uid)
+            return true;
+        })
         this.setState({
             employees: response.items,
-            departments: [this.departmentItemAll, ...response.items.map(e => {
-                return {label: e.department.label, uid: e.department.uid}
-            })].filter((item, index, inputArray) => {  // make it unique
-                return inputArray.indexOf(item) == index;
-            })
+            departments: department
         });
     }
 
@@ -136,8 +144,7 @@ export class Employees extends React.Component {
                     employees={this.state.employees.filter(this.filterEmployoeesOnlyInDepartment.bind(this))}
                     firstDay={this.state.firstDay}
                     lastDay={this.state.lastDay} />
-
-                <AddNewEmployee departments={this.state.departments} />
+                <AddNewEmployee />
             </div>
         )
     }
@@ -305,13 +312,28 @@ class AddNewEmployee extends React.Component {
             data: {},
             errors: {},
             show: false,
+            departments: [],
             formData: {
                 firstname: undefined,
                 lastname: undefined,
                 email: undefined,
-                department: undefined
+                department: undefined,
+                startDate: undefined,
             }
         }
+    }
+
+    componentDidMount() {
+        GetDepartment({onSuccess: this.pupulateListOfDepartments.bind(this)});
+    }
+
+    pupulateListOfDepartments(response) {
+        let departments = response.items.map(d => {
+            return {name: d.name, uid: d.uid}
+        });
+        if (departments.length > 0) {
+            this.setState({departments: departments});
+       }
     }
 
     onChange(e) {
@@ -320,18 +342,51 @@ class AddNewEmployee extends React.Component {
         this.setState({formData: formData});
     }
 
-    onSubmit(e) {
+    close() {
+        this.setState({show: false});
+    }
 
+    onSubmit(e) {
+        CreateNewEmployee(
+            this.state.formData.department,
+            {
+                onSuccess: () => {
+                    this.close();
+                    this.showToast("Invitation sent!", "success");
+                },
+                onError: () => {
+                    // TODO unhandlered error
+                    this.setState({isLoading: false});
+                }
+            }, {
+                firstName: this.state.formData.firstname,
+                lastName: this.state.formData.lastname,
+                email: this.state.formData.email,
+                startedAt: this.state.formData.startDate
+            });
+        e.preventDefault();
+    }
+
+    showToast(text, style) {
+        this.setState({
+            showToast: true,
+            toast: {
+                style: style,
+                text: text,
+            }});
+        setTimeout(() => {
+            this.setState({showToast: false})
+        }, 8000);
     }
 
     render() {
-        const {isLoading, toast} = this.state;
+        const {isLoading, toast, showToast} = this.state;
 
         return (
             <div>
-                <Toast text={toast.text} show={this.state.showToast} style={toast.style} />
-                <Modal show={this.state.show} onHide={() => this.setState({show: false})} className="requestTimeOffModal">
-                    <Form horizontal onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
+                <Toast text={toast.text} show={showToast} style={toast.style} />
+                <Modal show={this.state.show} onHide={ this.close.bind(this) } className="requestTimeOffModal">
+                    <Form horizontal onSubmit={ this.onSubmit.bind(this) } autoComplete="off">
                         <Modal.Header closeButton>
                             <Modal.Title>Invite new user</Modal.Title>
                         </Modal.Header>
@@ -360,7 +415,7 @@ class AddNewEmployee extends React.Component {
                                 <Col md={12}>
                                     <ControlLabel>Email</ControlLabel>
                                     <FormControl
-                                        type="text"
+                                        type="email"
                                         name="email"
                                         onChange={ this.onChange.bind(this) }
                                         disabled={ isLoading }
@@ -368,7 +423,7 @@ class AddNewEmployee extends React.Component {
                                 </Col>
                             </Row>
                             <Row>
-                                <Col md={12}>
+                                <Col md={6}>
                                     <ControlLabel>Department</ControlLabel>
                                         <FormControl
                                             name="department"
@@ -378,7 +433,7 @@ class AddNewEmployee extends React.Component {
                                             disabled={ isLoading }
                                             required>
                                                 <option value=""></option>
-                                            { this.props.departments.map((d, i) => {
+                                            { this.state.departments.map((d, i) => {
                                                 return (<option
                                                     key={d.uid}
                                                     value={d.uid}
@@ -386,10 +441,19 @@ class AddNewEmployee extends React.Component {
                                             })}
                                         </FormControl>
                                 </Col>
+                                <Col md={6}>
+                                    <ControlLabel>Employment start date</ControlLabel>
+                                    <FormControl
+                                        type="date"
+                                        name="startDate"
+                                        onChange={ this.onChange.bind(this) }
+                                        disabled={ isLoading }
+                                        required />
+                                </Col>
                             </Row>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button onClick={() => this.setState({show: false})} disabled={ isLoading } >Close</Button>
+                            <Button onClick={ this.close.bind(this) } disabled={ isLoading }>Close</Button>
                             <FormButton isLoading={ isLoading } bsStyle="success">Send invitation</FormButton>
                         </Modal.Footer>
                     </Form>
@@ -499,7 +563,7 @@ class BookTimeOffModal extends React.Component {
             <div>
                 <Toast text={toast.text} show={this.state.showToast} style={toast.style} />
                 <Modal show={this.props.show} onHide={this.props.close} className="requestTimeOffModal">
-                    <Form onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
+                    <Form onSubmit={ this.onSubmit.bind(this) } autoComplete="off">
                         <Modal.Header closeButton>
                             <Modal.Title>Request time off</Modal.Title>
                         </Modal.Header>

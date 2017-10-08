@@ -26,7 +26,19 @@ export function GetDepartmentEmployees(companyId, departmentId, actionObject) {
             'X-Authorization': "Bearer " + SessionManager.get().token,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
+        }
+    }), actionObject);
+}
+
+export function CreateNewEmployee(departmentId, actionObject, data) {
+    const user = SessionManager.getUserDetails();
+    fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId() + '/departments/' + departmentId + '/employees', {
+        method: 'POST',
+        headers: {
+            'X-Authorization': "Bearer " + SessionManager.get().token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(actionObject.body)
+        body: JSON.stringify(data)
     }), actionObject);
 }

@@ -18,7 +18,7 @@ export function CreateCompany(actionObject) {
 }
 
 export function GetCompany(actionObject) {
-    let user = SessionManager.getUserDetails();
+    const user = SessionManager.getUserDetails();
     fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId(), {
         method: 'GET',
         headers: {
@@ -30,7 +30,7 @@ export function GetCompany(actionObject) {
 }
 
 export function GetDepartment(actionObject) {
-    let user = SessionManager.getUserDetails();
+    const user = SessionManager.getUserDetails();
     fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId() + '/departments', {
         method: 'GET',
         headers: {
@@ -44,7 +44,7 @@ export function GetDepartment(actionObject) {
 
 
 export function GetCompanyEmployees(actionObject) {
-    let user = SessionManager.getUserDetails();
+    const user = SessionManager.getUserDetails();
     fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId() + '/employees', {
         method: 'GET',
         headers: {
@@ -58,7 +58,7 @@ export function GetCompanyEmployees(actionObject) {
 
 
 export function CreateDepartment(actionObject) {
-    let user = SessionManager.getUserDetails();
+    const user = SessionManager.getUserDetails();
     fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + user.getCompanyId() + '/departments', {
         method: 'POST',
         headers: {

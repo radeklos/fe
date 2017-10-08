@@ -5,6 +5,7 @@ import {MenuItem, SplitButton, Table, Media, Badge, Pager, Button, Row, Col, Mod
 
 import {Gravatar} from '../components/Gravatar'
 import {EmployeesTable, Days, BookTimeOffModal, calculateDays} from './Employees';
+import Setup from './../setup';
 
 
 describe('<EmployeesTable />', function() {
@@ -184,7 +185,7 @@ describe('<Days />', function() {
         const days = calculateDays(new Date("2017-01-01"), new Date("2017-01-31"));
         const wrapper = shallow(<Days leaves={[leaves]} days={days} />);
 
-        expect(wrapper.find('.time-off').parent().first().text()).to.equal('2');
+        expect(wrapper.find('.time-off').parent().first().render().text()).to.equal('2');
         expect(wrapper.find('.first.time-off')).to.have.length(1);
         expect(wrapper.find('.second.time-off')).to.have.length(1);
     });
@@ -203,7 +204,7 @@ describe('<Days />', function() {
         const days = calculateDays(new Date("2017-01-01"), new Date("2017-01-31"));
         const wrapper = shallow(<Days leaves={[leaves]} days={days} />);
 
-        expect(wrapper.find('.first.time-off').parent().map(l => l.text())).to.deep.equal(['2', '3', '4', '5', '6', '7', '8']);
+        expect(wrapper.find('.first.time-off').parent().map(l => l.render().text())).to.deep.equal(['2', '3', '4', '5', '6', '7', '8']);
         expect(wrapper.find('.first.time-off')).to.have.length(7);
         expect(wrapper.find('.second.time-off')).to.have.length(7);
     });
@@ -222,7 +223,7 @@ describe('<Days />', function() {
         const days = calculateDays(new Date("2017-02-01"), new Date("2017-02-28"));
         const wrapper = shallow(<Days leaves={[leaves]} days={days} />);
 
-        expect(wrapper.find('.first.time-off').parent().map(l => l.text())).to.deep.equal(['1', '2', '3', '4', '5']);
+        expect(wrapper.find('.first.time-off').parent().map(l => l.render().text())).to.deep.equal(['1', '2', '3', '4', '5']);
         expect(wrapper.find('.first.time-off')).to.have.length(5);
         expect(wrapper.find('.second.time-off')).to.have.length(5);
     });
@@ -241,7 +242,7 @@ describe('<Days />', function() {
         const days = calculateDays(new Date("2017-02-01"), new Date("2017-02-28"));
         const wrapper = shallow(<Days leaves={[leaves]} days={days} />);
 
-        expect(wrapper.find('.first.time-off').parent().map(l => l.text())).to.deep.equal(['25', '26', '27', '28']);
+        expect(wrapper.find('.first.time-off').parent().map(l => l.render().text())).to.deep.equal(['25', '26', '27', '28']);
         expect(wrapper.find('.first.time-off')).to.have.length(4);
         expect(wrapper.find('.second.time-off')).to.have.length(4);
     });
@@ -260,7 +261,7 @@ describe('<Days />', function() {
         const days = calculateDays(new Date("2017-02-01"), new Date("2017-02-28"));
         const wrapper = shallow(<Days leaves={[leaves]} days={days} />);
 
-        expect(wrapper.find('.second.time-off').parent().map(l => l.text())).to.deep.equal(['5', '6', '7']);
+        expect(wrapper.find('.second.time-off').parent().map(l => l.render().text())).to.deep.equal(['5', '6', '7']);
         expect(wrapper.find('.first.time-off')).to.have.length(2);
         expect(wrapper.find('.second.time-off')).to.have.length(3);
     });
@@ -279,7 +280,7 @@ describe('<Days />', function() {
         const days = calculateDays(new Date("2017-02-01"), new Date("2017-02-28"));
         const wrapper = shallow(<Days leaves={[leaves]} days={days} />);
 
-        expect(wrapper.find('.first.time-off').parent().map(l => l.text())).to.deep.equal(['5', '6', '7']);
+        expect(wrapper.find('.first.time-off').parent().map(l => l.render().text())).to.deep.equal(['5', '6', '7']);
         expect(wrapper.find('.first.time-off')).to.have.length(3);
         expect(wrapper.find('.second.time-off')).to.have.length(2);
     });
