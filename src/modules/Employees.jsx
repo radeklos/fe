@@ -347,6 +347,7 @@ class AddNewEmployee extends React.Component {
     }
 
     onSubmit(e) {
+        e.preventDefault();
         CreateNewEmployee(
             this.state.formData.department,
             {
@@ -363,8 +364,8 @@ class AddNewEmployee extends React.Component {
                 lastName: this.state.formData.lastname,
                 email: this.state.formData.email,
                 startedAt: this.state.formData.startDate
-            });
-        e.preventDefault();
+            }
+        );
     }
 
     showToast(text, style) {
@@ -459,10 +460,10 @@ class AddNewEmployee extends React.Component {
                     </Form>
                 </Modal>
 
-                <a href="#" onClick={() => this.setState({show: true})}>
+                <Button onClick={() => this.setState({show: true})}>
                     <Image src={plus} circle width="25" height="25" />{" "}
                     New user
-                </a>
+                </Button>
             </div>
         );
     }
