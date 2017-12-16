@@ -19,13 +19,14 @@ export default class FormField extends React.Component {
     render() {
         return (
             <FormGroup validationState={ this.props.error ? "error" : undefined }>
-                <Col componentClass={ControlLabel} sm={2}>{ this.props.children }</Col>
-                <Col sm={8}>
+                <Col componentClass={ControlLabel} sm={this.props.labelSize}>{ this.props.children }</Col>
+                <Col sm={this.props.inputSize}>
                     <FormControl
                         type={ this.props.type }
                         id={ this.props.name }
                         name={ this.props.name }
                         rel={ this.props.name }
+                        value={ this.props.value }
                         placeholder={ this.props.placeholder }
                         onChange={ this.onChange.bind(this) }
                         onBlur={ this.onBlur.bind(this) }
@@ -35,6 +36,11 @@ export default class FormField extends React.Component {
             </FormGroup>
         )
     }
+}
+
+FormField.defaultProps = {
+    labelSize: 2,
+    inputSize: 8,
 }
 
 export function FieldGroup({ id, label, help, ...props }) {

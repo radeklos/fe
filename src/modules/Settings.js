@@ -2,11 +2,13 @@ import React from 'react';
 
 import {Table, Button, Row, Col, Modal, Form, FormGroup, ControlLabel, FormControl} from "react-bootstrap";
 
+import FormField from "../forms/FormField.jsx";
 import {Route, Switch} from "react-router-dom";
 import {Link} from 'react-router-dom'
 import {GetDepartment, GetCompanyEmployees, CreateDepartment} from "../api/Companies.jsx";
 import FormButton from "../forms/FormButton.jsx";
 import {Toast} from '../components/Toast'
+import {GetDetails} from "../api/Users.jsx";
 
 
 class Signpost extends React.Component {
@@ -16,7 +18,7 @@ class Signpost extends React.Component {
                 <h1>Settings</h1>
                 <Row>
                     <Col md={6}>
-                        <h2>General Settings</h2>
+                        <h2><Link to="/settings/general">General Settings</Link></h2>
                     </Col>
                     <Col md={6}>
                         <h2><Link to="/settings/department">Department</Link></h2>
@@ -28,7 +30,7 @@ class Signpost extends React.Component {
 }
 
 
-export class Department extends React.Component {
+class Department extends React.Component {
 
     constructor(props) {
         super(props);
@@ -82,6 +84,196 @@ export class Department extends React.Component {
     }
 }
 
+class General extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true,
+        };
+    }
+
+    componentDidMount() {
+        GetDetails({
+            onSuccess: (res) => {
+                this.setState({userDetails: res, isLoading: false})
+            }
+        });
+    }
+
+    render() {
+        if (this.state.isLoading) {
+            return (<div></div>);
+        }
+        return (
+            <div>
+                <h1>General settings</h1>
+                <Row>
+                    <Col sm={7}>
+                        <h2>Personal Details</h2>
+                        <PersonalDetailsForm userDetails={this.state.userDetails} />
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col sm={7}>
+                        <h2>Change Password</h2>
+                        <ChangePasswordForm />
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
+}
+
+class PersonalDetailsForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            show: false,
+            isLoading: false,
+            formData: {
+                firstName: props.userDetails.firstName,
+                lastName: props.userDetails.lastName,
+                email: props.userDetails.email
+            },
+            showToast: false,
+            toast: {
+                text: undefined,
+                style: undefined
+            }
+        };
+    }
+
+    onChange(e) {
+        let formData = this.state.formData;
+        formData[e.target.name] = e.target.value;
+        this.setState({formData: formData});
+    }
+
+    onSubmit(e) {
+        this.setState({isLoading: true});
+        e.preventDefault();
+    }
+
+    render() {
+        return (
+            <Form horizontal onSubmit={ this.onSubmit.bind(this) } >
+                <FormField
+                    type="text"
+                    name="firstName"
+                    value={ this.state.formData.firstName }
+                    labelSize={3}
+                    onChange={ this.onChange.bind(this) }
+                >
+                    First name
+                </FormField>
+
+                <FormField
+                    type="text"
+                    name="lastName"
+                    value={ this.state.formData.lastName }
+                    labelSize={3}
+                    onChange={ this.onChange.bind(this) }
+                >
+                    Last name
+                </FormField>
+
+                <FormField
+                    type="text"
+                    name="email"
+                    value={ this.state.formData.email }
+                    labelSize={3}
+                    onChange={ this.onChange.bind(this) }
+                >
+                    Email
+                </FormField>
+
+                <FormGroup>
+                    <Col sm={8} smOffset={3}>
+                        <FormButton
+                            isLoading={ this.state.isLoading }
+                            bsStyle="success">Update</FormButton>
+                    </Col>
+                </FormGroup>
+            </Form>
+        )
+    }
+}
+
+class ChangePasswordForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            show: false,
+            isLoading: false,
+            formData: {
+                firstName: undefined,
+                boss: undefined,
+                daysOff: undefined
+            },
+            showToast: false,
+            toast: {
+                text: undefined,
+                style: undefined
+            }
+        };
+    }
+
+    onChange(e) {
+        let formData = this.state.formData;
+        formData[e.target.name] = e.target.value;
+        this.setState({formData: formData});
+    }
+
+    onSubmit(e) {
+        this.setState({isLoading: true});
+        e.preventDefault();
+    }
+
+    render() {
+        return (
+            <Form horizontal>
+                <FormField
+                    type="password"
+                    name="current"
+                    labelSize={3}
+                    onChange={ this.onChange.bind(this) }
+                >
+                    Current password
+                </FormField>
+
+                <FormField
+                    type="password"
+                    name="current"
+                    labelSize={3}
+                    onChange={ this.onChange.bind(this) }
+                >
+                    New password
+                </FormField>
+
+                <FormField
+                    type="password"
+                    name="current"
+                    labelSize={3}
+                    onChange={ this.onChange.bind(this) }
+                >
+                    Confirm
+                </FormField>
+
+                <FormGroup>
+                    <Col sm={8} smOffset={3}>
+                        <FormButton
+                            isLoading={ this.state.isLoading }
+                            bsStyle="success">Update</FormButton>
+                    </Col>
+                </FormGroup>
+            </Form>
+        )
+    }
+}
 
 export class AddNewDepartment extends React.Component {
 
@@ -227,6 +419,7 @@ export class Settings extends React.Component {
         return (
             <Switch>
                 <Route path='/settings/department' component={Department} />
+                <Route path='/settings/general' component={General} />
                 <Route component={Signpost} />
             </Switch>
         )
