@@ -25,11 +25,12 @@ export default class FormField extends React.Component {
                         type={ this.props.type }
                         id={ this.props.name }
                         name={ this.props.name }
-                        rel={ this.props.name }
                         value={ this.props.value }
                         placeholder={ this.props.placeholder }
                         onChange={ this.onChange.bind(this) }
+                        disabled={ this.props.disabled }
                         onBlur={ this.onBlur.bind(this) }
+                        required={ this.props.required }
                     />
                     <HelpBlock>{ this.props.error }</HelpBlock>
                 </Col>
@@ -41,6 +42,8 @@ export default class FormField extends React.Component {
 FormField.defaultProps = {
     labelSize: 2,
     inputSize: 8,
+    disabled: false,
+    required: false
 }
 
 export function FieldGroup({ id, label, help, ...props }) {

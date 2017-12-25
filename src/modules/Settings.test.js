@@ -1,8 +1,8 @@
 import React from 'react';
-import {shallow} from 'enzyme';
+import {shallow, mount} from 'enzyme';
 import {expect} from 'chai';
 
-import {DepartmentTable, Department, AddNewDepartment} from './Settings';
+import {DepartmentTable, Department, AddNewDepartment, ChangePasswordForm} from './Settings';
 import Setup from './../setup';
 
 
@@ -33,6 +33,23 @@ describe('<AddNewDepartment />', function() {
 
         wrapper.find('.pull-right').simulate('click');
         expect(wrapper.state('show')).to.equals(true);
+    });
+
+});
+
+describe('<ChangePasswordForm />', function() {
+
+    it('password must be same', () => {
+        const wrapper = mount(<ChangePasswordForm employees={[]} />);
+
+        wrapper.find('input#newPassword').simulate('change', {target: {name: 'newPassword', value: 'password1'}});
+        wrapper.find('input#retryPassword').simulate('change', {target: {name: 'retryPassword', value: 'password2'}});
+        wrapper.find('form').simulate('submit');
+
+        expect(wrapper.state('formData')['newPassword']).to.equals('password1');
+        expect(wrapper.state('formData')['retryPassword']).to.equals('password2');
+
+        expect(wrapper.html()).to.contains('Passwords do not match');
     });
 
 });

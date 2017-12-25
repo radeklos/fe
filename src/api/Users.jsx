@@ -40,3 +40,19 @@ export function GetDetails(actionObject) {
         },
     }), actionObject);
 }
+
+export function UpdateDetails(actionObject) {
+    fetchHandler(fetch(config.SERVER_URL + '/v1/users/me', {
+        method: 'PUT',
+        headers: {
+            'X-Authorization': "Bearer " + SessionManager.getToken(),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            firstName: actionObject.body.firstName,
+            lastName: actionObject.body.lastName,
+            email: actionObject.body.email
+        }),
+    }), actionObject);
+}

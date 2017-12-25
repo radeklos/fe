@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom'
 import {GetDepartment, GetCompanyEmployees, CreateDepartment} from "../api/Companies.jsx";
 import FormButton from "../forms/FormButton.jsx";
 import {Toast} from '../components/Toast'
-import {GetDetails} from "../api/Users.jsx";
+import {GetDetails, UpdateDetails} from "../api/Users.jsx";
 
 
 class Signpost extends React.Component {
@@ -154,6 +154,12 @@ class PersonalDetailsForm extends React.Component {
 
     onSubmit(e) {
         this.setState({isLoading: true});
+        UpdateDetails({
+            onSuccess: (res) => {
+                this.setState({isLoading: false});
+            },
+            body: this.state.formData
+        });
         e.preventDefault();
     }
 
@@ -165,6 +171,8 @@ class PersonalDetailsForm extends React.Component {
                     name="firstName"
                     value={ this.state.formData.firstName }
                     labelSize={3}
+                    required
+                    disabled={this.state.isLoading}
                     onChange={ this.onChange.bind(this) }
                 >
                     First name
@@ -175,6 +183,8 @@ class PersonalDetailsForm extends React.Component {
                     name="lastName"
                     value={ this.state.formData.lastName }
                     labelSize={3}
+                    required
+                    disabled={this.state.isLoading}
                     onChange={ this.onChange.bind(this) }
                 >
                     Last name
@@ -185,6 +195,8 @@ class PersonalDetailsForm extends React.Component {
                     name="email"
                     value={ this.state.formData.email }
                     labelSize={3}
+                    required
+                    disabled={this.state.isLoading}
                     onChange={ this.onChange.bind(this) }
                 >
                     Email
@@ -194,7 +206,7 @@ class PersonalDetailsForm extends React.Component {
                     <Col sm={8} smOffset={3}>
                         <FormButton
                             isLoading={ this.state.isLoading }
-                            bsStyle="success">Update</FormButton>
+                            bsStyle="success">Update profile</FormButton>
                     </Col>
                 </FormGroup>
             </Form>
@@ -202,7 +214,7 @@ class PersonalDetailsForm extends React.Component {
     }
 }
 
-class ChangePasswordForm extends React.Component {
+export class ChangePasswordForm extends React.Component {
 
     constructor(props) {
         super(props);
@@ -210,9 +222,12 @@ class ChangePasswordForm extends React.Component {
             show: false,
             isLoading: false,
             formData: {
-                firstName: undefined,
-                boss: undefined,
-                daysOff: undefined
+                current: undefined,
+                newPassword: undefined,
+                retryPassword: undefined
+            },
+            errors: {
+                newPassword: undefined
             },
             showToast: false,
             toast: {
@@ -229,34 +244,40 @@ class ChangePasswordForm extends React.Component {
     }
 
     onSubmit(e) {
-        this.setState({isLoading: true});
+        if (this.validateForm()) {
+            this.setState({isLoading: true});
+        }
         e.preventDefault();
+    }
+
+    validateForm() {
+        if (this.state.formData.newPassword !== this.state.formData.retryPassword) {
+            this.setState({errors: {newPassword: 'Passwords do not match'}});
+            return false;
+        } else {
+            this.setState({errors: {newPassword: undefined}});
+            return true;
+        }
     }
 
     render() {
         return (
-            <Form horizontal>
-                <FormField
-                    type="password"
-                    name="current"
-                    labelSize={3}
-                    onChange={ this.onChange.bind(this) }
-                >
-                    Current password
-                </FormField>
+            <Form horizontal onSubmit={ this.onSubmit.bind(this) }>
 
                 <FormField
                     type="password"
-                    name="current"
+                    name="newPassword"
+                    required
                     labelSize={3}
                     onChange={ this.onChange.bind(this) }
+                    error={ this.state.errors.newPassword }
                 >
                     New password
                 </FormField>
 
                 <FormField
                     type="password"
-                    name="current"
+                    name="retryPassword"
                     labelSize={3}
                     onChange={ this.onChange.bind(this) }
                 >
@@ -267,7 +288,7 @@ class ChangePasswordForm extends React.Component {
                     <Col sm={8} smOffset={3}>
                         <FormButton
                             isLoading={ this.state.isLoading }
-                            bsStyle="success">Update</FormButton>
+                            bsStyle="success">Change password</FormButton>
                     </Col>
                 </FormGroup>
             </Form>
