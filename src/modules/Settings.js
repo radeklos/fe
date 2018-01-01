@@ -24,6 +24,12 @@ class Signpost extends React.Component {
                         <h2><Link to="/settings/department">Department</Link></h2>
                     </Col>
                 </Row>
+
+                <Row>
+                    <Col md={6}>
+                        <h2><Link to="/settings/employees">Employees</Link></h2>
+                    </Col>
+                </Row>
             </div>
         )
     }
@@ -469,6 +475,28 @@ export class AddNewDepartment extends React.Component {
     }
 }
 
+class Employees extends React.Component {
+
+    populateEmployees(response) {
+        console.log(response);
+        if(response.total >= 1) {
+            this.setState({employees: response.items})
+        }
+    }
+
+    componentDidMount() {
+        GetCompanyEmployees({onSuccess: this.populateEmployees.bind(this)});
+    }
+
+    render() {
+        return (
+            <div>
+                <h1>Employees</h1>
+            </div>
+        )
+    }
+}
+
 
 export class Settings extends React.Component {
     render() {
@@ -476,6 +504,7 @@ export class Settings extends React.Component {
             <Switch>
                 <Route path='/settings/department' component={Department} />
                 <Route path='/settings/general' component={General} />
+                <Route path='/settings/employees' component={Employees} />
                 <Route component={Signpost} />
             </Switch>
         )

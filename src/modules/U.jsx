@@ -11,10 +11,8 @@ import {Employees} from "./Employees";
 
 export class U extends React.Component {
     render() {
-        console.log('companyId', 'aa')
         if(SessionManager.isLogIn()) {
             const companyId = SessionManager.getUserDetails().getCompanyId();
-            console.log('companyId', !!companyId)
             if (!!companyId) {
                 return ( <Employees /> );
             } else {
