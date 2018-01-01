@@ -1,28 +1,24 @@
 import React from "react";
 
 import {Button, Jumbotron} from "react-bootstrap";
-import {Route} from "react-router-dom";
+import {Redirect} from "react-router";
 
 import SessionManager from "../services/Session.jsx";
 import CompanyForm from "../forms/CompanyForm.jsx";
 import {ImportEmployeesModal} from "./ImportEmployees";
 import {Employees} from "./Employees";
-import {Settings} from "./Settings";
 
 
 export class U extends React.Component {
     render() {
+        console.log('companyId', 'aa')
         if(SessionManager.isLogIn()) {
             const companyId = SessionManager.getUserDetails().getCompanyId();
+            console.log('companyId', !!companyId)
             if (!!companyId) {
-                return (
-                    <div>
-                        <Route path="/" exact component={Employees} />
-                        <Route path="/settings" component={Settings} />
-                    </div>
-                );
+                return ( <Employees /> );
             } else {
-                return (<CreateCompany />);
+                return ( <CreateCompany /> );
             }
         } else {
             return (
@@ -44,10 +40,14 @@ export class CreateCompany extends React.Component {
     }
 
     onFormSuccess(data) {
-        this.props.history.push('/newcomers/import-employees')
+        this.setState({companyCreated: true})
     }
 
     render() {
+        if (this.state.companyCreated) {
+            return <Redirect to="/" push={true} />
+        }
+
         return (
             <div>
                 <h1>Hello stranger</h1>

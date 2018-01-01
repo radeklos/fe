@@ -52,7 +52,8 @@ export function UpdateDetails(actionObject) {
         body: JSON.stringify({
             firstName: actionObject.body.firstName,
             lastName: actionObject.body.lastName,
-            email: actionObject.body.email
+            email: actionObject.body.email,
+            password: actionObject.body.password
         }),
     }), actionObject);
 }

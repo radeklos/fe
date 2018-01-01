@@ -1,4 +1,6 @@
 import React from "react";
+import {Redirect, Route, Switch} from 'react-router'
+
 import "whatwg-fetch";
 
 import {Col, Form, FormGroup} from "react-bootstrap";
@@ -6,15 +8,28 @@ import FormField from "../forms/FormField.jsx";
 import FormButton from "../forms/FormButton.jsx";
 import {PerformRegistration} from "../api/Users.jsx";
 
-
 export class Join extends React.Component {
+
+    render() {
+        return (
+            <Switch>
+                <Route exact path="/join" component={() => <JoinForm />} />
+                <Route path="/join/finished" render={() => <Finished />} />
+            </Switch>
+        );
+    }
+
+}
+
+class JoinForm extends React.Component {
 
     constructor (props) {
         super(props);
         this.state = {
             data: {},
             errors: {},
-            isLoading: false
+            isLoading: false,
+            finished: false
         };
         this.verifyPassword = this.verifyPassword.bind(this);
     }
@@ -23,9 +38,9 @@ export class Join extends React.Component {
         this.verifyPassword();
         if (Object.keys(this.state.errors).length === 0) {
             this.setState({
-                isLoading: true
+                isLoading: true,
+                finished: true
             });
-
             PerformRegistration({
                 body: {
                     firstName: this.state.data.firstName,
@@ -34,7 +49,7 @@ export class Join extends React.Component {
                     password: this.state.data.password
                 },
                 onSuccess: function () {
-                    this.props.history.push('/join/finished')
+                    this.state({finished: true});
                 },
                 onError: function (json) {
                     let errors = {};
@@ -77,6 +92,10 @@ export class Join extends React.Component {
     }
 
     render() {
+        if (this.state.finished) {
+            return <Redirect to="/join/finished" push={true} />
+        }
+
         return (<div>
             <h1>Join</h1>
             <Form horizontal onSubmit={ this.onSubmit.bind(this) } method="post" autoComplete="off">
@@ -125,7 +144,7 @@ export class Join extends React.Component {
 }
 
 
-export class Finished extends React.Component {
+class Finished extends React.Component {
     render() {
         return (<div>
             <h1>Check your email</h1>

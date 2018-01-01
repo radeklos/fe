@@ -2,7 +2,7 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-import {BrowserRouter, Route} from "react-router-dom";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {MenuItem, Modal, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
 
@@ -12,6 +12,7 @@ import {GetDetails} from "./api/Users.jsx";
 
 import {Join} from "./modules/Join.jsx";
 import {U} from "./modules/U.jsx";
+import {Settings} from "./modules/Settings";
 import {config} from "./config";
 
 
@@ -111,7 +112,7 @@ class App extends React.Component {
                         <Navbar.Header>
                             <Navbar.Brand>
                                 <a href="/">
-                                    <img src={logo} className="app-logo" alt="logo"/> hld.
+                                    <img src={logo} className="app-logo" alt="logo"/> chll
                                 </a>
                             </Navbar.Brand>
                             { isLogIn ? "" : <Navbar.Toggle /> }
@@ -122,8 +123,12 @@ class App extends React.Component {
                     </Navbar>
 
                     <div className="container">
-                        <Route path="/" render={() => <U />} />
-                        <Route path="/join" component={Join} />
+                        <Switch>
+                            <Route exact path="/" component={U} />
+                            <Route path="/settings" component={Settings} />
+
+                            <Route path="/join" component={Join} />
+                        </Switch>
                     </div>
 
                     { login }

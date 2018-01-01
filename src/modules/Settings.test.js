@@ -42,11 +42,11 @@ describe('<ChangePasswordForm />', function() {
     it('password must be same', () => {
         const wrapper = mount(<ChangePasswordForm employees={[]} />);
 
-        wrapper.find('input#newPassword').simulate('change', {target: {name: 'newPassword', value: 'password1'}});
+        wrapper.find('input#password').simulate('change', {target: {name: 'password', value: 'password1'}});
         wrapper.find('input#retryPassword').simulate('change', {target: {name: 'retryPassword', value: 'password2'}});
         wrapper.find('form').simulate('submit');
 
-        expect(wrapper.state('formData')['newPassword']).to.equals('password1');
+        expect(wrapper.state('formData')['password']).to.equals('password1');
         expect(wrapper.state('formData')['retryPassword']).to.equals('password2');
 
         expect(wrapper.html()).to.contains('Passwords do not match');

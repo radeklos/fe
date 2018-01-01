@@ -3,7 +3,7 @@ import React from 'react';
 import {Table, Button, Row, Col, Modal, Form, FormGroup, ControlLabel, FormControl} from "react-bootstrap";
 
 import FormField from "../forms/FormField.jsx";
-import {Route, Switch} from "react-router-dom";
+import {Route, Switch} from "react-router";
 import {Link} from 'react-router-dom'
 import {GetDepartment, GetCompanyEmployees, CreateDepartment} from "../api/Companies.jsx";
 import FormButton from "../forms/FormButton.jsx";
@@ -90,6 +90,11 @@ class General extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
+            toast: {
+                text: undefined,
+                style: undefined,
+                show: false
+            }
         };
     }
 
@@ -101,12 +106,25 @@ class General extends React.Component {
         });
     }
 
+    showToast() {
+        const toast = {
+            text: 'Profile updated',
+            style: 'success',
+            show: true
+        }
+        this.setState({toast: toast});
+        setTimeout(() => {
+            this.setState({toast: {show: false}})
+        }, 8000);
+    }
+
     render() {
         if (this.state.isLoading) {
             return (<div></div>);
         }
         return (
             <div>
+                <Toast {...this.state.toast} />
                 <h1>General settings</h1>
                 <Row>
                     <Col sm={7}>
@@ -118,7 +136,7 @@ class General extends React.Component {
                 <Row>
                     <Col sm={7}>
                         <h2>Change Password</h2>
-                        <ChangePasswordForm />
+                        <ChangePasswordForm onSuccess={() => this.showToast()} />
                     </Col>
                 </Row>
             </div>
@@ -214,27 +232,24 @@ class PersonalDetailsForm extends React.Component {
     }
 }
 
-export class ChangePasswordForm extends React.Component {
+export class ChangePasswordForm  extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            show: false,
+        this.state = this.getInitialState();
+    }
+
+    getInitialState() {
+        return {
             isLoading: false,
             formData: {
-                current: undefined,
-                newPassword: undefined,
+                password: undefined,
                 retryPassword: undefined
             },
             errors: {
-                newPassword: undefined
-            },
-            showToast: false,
-            toast: {
-                text: undefined,
-                style: undefined
+                password: undefined
             }
-        };
+        }
     }
 
     onChange(e) {
@@ -246,16 +261,36 @@ export class ChangePasswordForm extends React.Component {
     onSubmit(e) {
         if (this.validateForm()) {
             this.setState({isLoading: true});
+            UpdateDetails({
+                onSuccess: () => {
+                    this.setState(this.getInitialState(), () => {
+                        this.props.onSuccess();
+                    })
+                },
+                onError: (json) => {
+                    let errors = {};
+                    for (const key in json.errors) {
+                        errors[key] = json.errors[key].defaultMessage
+                    }
+                    this.setState({
+                        errors: errors,
+                        isLoading: false
+                    });
+                },
+                body: {
+                    password: this.state.formData.password
+                }
+            });
         }
         e.preventDefault();
     }
 
     validateForm() {
-        if (this.state.formData.newPassword !== this.state.formData.retryPassword) {
-            this.setState({errors: {newPassword: 'Passwords do not match'}});
+        if (this.state.formData.password !== this.state.formData.retryPassword) {
+            this.setState({errors: {password: 'Passwords do not match'}});
             return false;
         } else {
-            this.setState({errors: {newPassword: undefined}});
+            this.setState({errors: {password: undefined}});
             return true;
         }
     }
@@ -266,11 +301,11 @@ export class ChangePasswordForm extends React.Component {
 
                 <FormField
                     type="password"
-                    name="newPassword"
+                    name="password"
                     required
                     labelSize={3}
                     onChange={ this.onChange.bind(this) }
-                    error={ this.state.errors.newPassword }
+                    error={ this.state.errors.password }
                 >
                     New password
                 </FormField>
