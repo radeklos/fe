@@ -11,6 +11,10 @@ import {GetLeaves, CreateLeave} from "../api/Leaves";
 import {GetDepartment} from '../api/Companies'
 import {CreateNewEmployee} from '../api/Employees'
 
+import 'react-dates/initialize';
+import {DateRangePicker, SingleDatePicker, DayPickerRangeController} from 'react-dates';
+import 'react-dates/lib/css/_datepicker.css';
+import moment from 'moment'
 
 const formatDate = (date) => date.toISOString().slice(0, 10);
 
@@ -493,6 +497,11 @@ class BookTimeOffModal extends React.Component {
                 starting: formatDate(new Date()),
                 ending: undefined
             },
+            picker: {
+                startDate: moment(),
+                endDate: moment(),
+                focusedInput: 'startDate'
+            },
             toast: {
                 style: undefined,
                 text: undefined,
@@ -557,6 +566,10 @@ class BookTimeOffModal extends React.Component {
         }, 8000);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        console.log('state', this.state);
+    }
+
     render() {
         const {formData, isLoading, toast} = this.state;
 
@@ -570,53 +583,20 @@ class BookTimeOffModal extends React.Component {
                         </Modal.Header>
                         <Modal.Body>
                             <Row>
-                                <Col md={6}>
-                                    <FormGroup>
-                                        <ControlLabel>Starting</ControlLabel>
-                                        <InputGroup>
-                                            <FormControl
-                                                type="date"
-                                                name="starting"
-                                                value={ formData.starting }
-                                                onChange={ this.onChange.bind(this) }
-                                                disabled={ isLoading }
-                                                required />
-                                            <DropdownButton
-                                              componentClass={InputGroup.Button}
-                                              id="input-dropdown-addon"
-                                              disabled={ isLoading }
-                                              title={ BookTimeOffModal.amPm.starting[formData.startingAt] }
-                                            >
-                                                <MenuItem eventKey="am" onSelect={ this.ampmChange.bind(this, 'startingAt') }>Morning</MenuItem>
-                                                <MenuItem eventKey="pm" onSelect={ this.ampmChange.bind(this, 'startingAt') }>Afternoon</MenuItem>
-                                            </DropdownButton>
-                                      </InputGroup>
-                                    </FormGroup>
-                                </Col>
-                                <Col md={6}>
-                                    <FormGroup>
-                                        <ControlLabel>Ending</ControlLabel>
-                                        <InputGroup>
-                                            <FormControl
-                                                type="date"
-                                                name="ending"
-                                                value={ formData.ending }
-                                                onChange={ this.onChange.bind(this) }
-                                                disabled={ isLoading }
-                                                min={ formData.starting }
-                                                required />
-                                            <DropdownButton
-                                              componentClass={InputGroup.Button}
-                                              id="input-dropdown-addon"
-                                              disabled={ isLoading }
-                                              title={ BookTimeOffModal.amPm.ending[formData.endingAt] }
-                                            >
-                                                <MenuItem eventKey="pm" onSelect={ this.ampmChange.bind(this, 'endingAt') }>Lunchtime</MenuItem>
-                                                <MenuItem eventKey="am" onSelect={ this.ampmChange.bind(this, 'endingAt') }>End of Day</MenuItem>
-                                            </DropdownButton>
-                                        </InputGroup>
-                                    </FormGroup>
-                                </Col>
+                                <DateRangePicker
+                                    startDate={this.state.picker.startDate}
+                                    endDate={this.state.picker.endDate}
+                                    onDatesChange={({startDate, endDate}) => {
+                                        this.setState({
+                                            picker: {
+                                                startDate: startDate,
+                                                endDate: endDate
+                                            }
+                                        });
+                                    }}
+                                    focusedInput={ this.state.focusedInput }
+                                    onFocusChange={focusedInput => this.setState({ focusedInput })}
+                                />
                             </Row>
 
                             <FormGroup controlId="formControlsTextarea">

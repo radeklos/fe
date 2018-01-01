@@ -19,8 +19,8 @@ export function ImportEmployees(companyId, file, actionObject) {
     }), actionObject);
 }
 
-export function GetDepartmentEmployees(companyId, departmentId, actionObject) {
-    fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + companyId + '/departments/' + departmentId + '/employees', {
+export function GetCompanyEmployees(companyId, actionObject) {
+    fetchHandler(fetch(config.SERVER_URL + '/v1/companies/' + companyId + '/employees', {
         method: 'GET',
         headers: {
             'X-Authorization': "Bearer " + SessionManager.get().token,
