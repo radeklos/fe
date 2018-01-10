@@ -10,7 +10,7 @@ import FormButton from "../forms/FormButton.jsx";
 import {GetLeaves, CreateLeave} from "../api/Leaves";
 import {GetDepartment} from '../api/Companies'
 import {CreateNewEmployee} from '../api/Employees'
-import {DateRangePicker, SingleDatePicker, DayPickerRangeController} from 'react-dates';
+import {SingleDatePicker} from 'react-dates';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import moment from 'moment'
@@ -498,8 +498,7 @@ class BookTimeOffModal extends React.Component {
             },
             picker: {
                 startDate: moment(),
-                endDate: moment(),
-                focusedInput: 'startDate'
+                endDate: moment()
             },
             toast: {
                 style: undefined,
@@ -565,37 +564,90 @@ class BookTimeOffModal extends React.Component {
         }, 8000);
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        console.log('state', this.state);
-    }
-
     render() {
         const {formData, isLoading, toast} = this.state;
 
         return (
             <div>
                 <Toast text={toast.text} show={this.state.showToast} style={toast.style} />
-                <Modal show={this.props.show} onHide={this.props.close} className="requestTimeOffModal">
+                <Modal show={!this.props.show} onHide={this.props.close} className="requestTimeOffModal">
                     <Form onSubmit={ this.onSubmit.bind(this) } autoComplete="off">
                         <Modal.Header closeButton>
                             <Modal.Title>Request time off</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <Row>
-                                <DateRangePicker
-                                    startDate={this.state.picker.startDate}
-                                    endDate={this.state.picker.endDate}
-                                    onDatesChange={({startDate, endDate}) => {
-                                        this.setState({
-                                            picker: {
-                                                startDate: startDate,
-                                                endDate: endDate
-                                            }
-                                        });
-                                    }}
-                                    focusedInput={ this.state.focusedInput }
-                                    onFocusChange={focusedInput => this.setState({ focusedInput })}
-                                />
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <ControlLabel>Starting</ControlLabel>
+                                        <InputGroup>
+                                            <InputGroup.Addon style={{background: 'white', paddingTop: '8px', paddingBottom: '3px'}}>
+                                                <SingleDatePicker
+                                                    date={this.state.picker.startDate}
+                                                    onDateChange={date => {
+                                                            this.setState({
+                                                                picker: {
+                                                                    startDate: date,
+                                                                    endDate: this.state.picker.endDate
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                    focused={ this.state.focusedStartInput }
+                                                    onFocusChange={({ focused }) => this.setState({focusedStartInput: focused})}
+                                                    small
+                                                    block
+                                                    noBorder
+                                                    hideKeyboardShortcutsPanel
+                                                />
+                                            </InputGroup.Addon>
+                                            <DropdownButton
+                                              componentClass={InputGroup.Button}
+                                              id='input-dropdown-addon'
+                                              disabled={ isLoading }
+                                              title={ BookTimeOffModal.amPm.starting[formData.startingAt] }
+                                            >
+                                                <MenuItem eventKey='am' onSelect={ this.ampmChange.bind(this, 'startingAt') }>Morning</MenuItem>
+                                                <MenuItem eventKey='pm' onSelect={ this.ampmChange.bind(this, 'startingAt') }>Afternoon</MenuItem>
+                                            </DropdownButton>
+                                        </InputGroup>
+                                    </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <ControlLabel>Ending</ControlLabel>
+                                        <InputGroup>
+                                            <InputGroup.Addon style={{background: 'white', paddingTop: '8px', paddingBottom: '3px'}}>
+                                                <SingleDatePicker
+                                                    date={this.state.picker.endDate}
+                                                    onDateChange={date => {
+                                                            this.setState({
+                                                                picker: {
+                                                                    startDate: this.state.picker.startDate,
+                                                                    endDate: date
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                    focused={ this.state.focusedEndInput }
+                                                    onFocusChange={({ focused }) => this.setState({focusedEndInput: focused})}
+                                                    small
+                                                    block
+                                                    noBorder
+                                                />
+                                            </InputGroup.Addon>
+                                            <DropdownButton
+                                              componentClass={InputGroup.Button}
+                                              id="input-dropdown-addon"
+                                              disabled={ isLoading }
+                                              title={ BookTimeOffModal.amPm.ending[formData.endingAt] }
+                                            >
+                                                <MenuItem eventKey="pm" onSelect={ this.ampmChange.bind(this, 'endingAt') }>Lunchtime</MenuItem>
+                                                <MenuItem eventKey="am" onSelect={ this.ampmChange.bind(this, 'endingAt') }>End of Day</MenuItem>
+                                            </DropdownButton>
+                                        </InputGroup>
+                                    </FormGroup>
+                                </Col>
                             </Row>
 
                             <FormGroup controlId="formControlsTextarea">
