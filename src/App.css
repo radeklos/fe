@@ -152,3 +152,7 @@ a:focus {
 .dropdown-menu .sub-menu {
     visibility: hidden;
 }
+
+.DateInput_input__small {
+    padding: 0 !important;
+}
