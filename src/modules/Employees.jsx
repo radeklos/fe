@@ -619,7 +619,7 @@ class BookTimeOffModal extends React.Component {
                                         <InputGroup>
                                             <InputGroup.Addon style={{background: 'white', paddingTop: '8px', paddingBottom: '3px'}}>
                                                 <SingleDatePicker
-                                                    date={this.state.picker.endDate}
+                                                    date={moment.max(this.state.picker.startDate, this.state.picker.endDate)}
                                                     onDateChange={date => {
                                                             this.setState({
                                                                 picker: {
@@ -631,9 +631,11 @@ class BookTimeOffModal extends React.Component {
                                                     }
                                                     focused={ this.state.focusedEndInput }
                                                     onFocusChange={({ focused }) => this.setState({focusedEndInput: focused})}
+                                                    isOutsideRange={day => day.isBefore(this.state.picker.startDate) }
                                                     small
                                                     block
                                                     noBorder
+                                                    hideKeyboardShortcutsPanel
                                                 />
                                             </InputGroup.Addon>
                                             <DropdownButton
