@@ -550,9 +550,9 @@ class BookTimeOffModal extends React.Component {
         }, {
             leaveType: this.state.formData.leaveType,
             startingAt: this.state.formData.startingAt,
-            starting: this.state.formData.starting,
+            starting: this.state.picker.startDate.toDate(),
             endingAt: this.state.formData.endingAt,
-            ending: this.state.formData.ending,
+            ending: this.state.picker.endDate.toDate(),
             reason: this.state.formData.reason,
         });
         e.preventDefault();
@@ -571,7 +571,7 @@ class BookTimeOffModal extends React.Component {
         return (
             <div>
                 <Toast text={toast.text} show={this.state.showToast} style={toast.style} />
-                <Modal show={!this.props.show} onHide={this.props.close} className="requestTimeOffModal">
+                <Modal show={this.props.show} onHide={this.props.close} className="requestTimeOffModal">
                     <Form onSubmit={ this.onSubmit.bind(this) } autoComplete="off">
                         <Modal.Header closeButton>
                             <Modal.Title>Request time off</Modal.Title>
