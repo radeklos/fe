@@ -83,7 +83,7 @@ export class Employees extends React.Component {
         this.setState({
             firstDay: firstDay,
             lastDay: lastDay
-        })
+        }, () => this.getLeaves())
     }
 
     localizeMonth(date) {
@@ -594,6 +594,7 @@ class BookTimeOffModal extends React.Component {
                                                             });
                                                         }
                                                     }
+                                                    numberOfMonths={1}
                                                     focused={ this.state.focusedStartInput }
                                                     onFocusChange={({ focused }) => this.setState({focusedStartInput: focused})}
                                                     small
@@ -630,6 +631,7 @@ class BookTimeOffModal extends React.Component {
                                                             });
                                                         }
                                                     }
+                                                    numberOfMonths={1}
                                                     focused={ this.state.focusedEndInput }
                                                     onFocusChange={({ focused }) => this.setState({focusedEndInput: focused})}
                                                     isOutsideRange={day => day.isBefore(this.state.picker.startDate) }
